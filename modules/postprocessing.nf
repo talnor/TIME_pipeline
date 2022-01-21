@@ -15,3 +15,20 @@ process infectionEstimation {
     > eti_calculations_${ticket}_${min_cov_eti}X_${DATE}.csv
     """
 }
+
+process plotCoverage {
+
+    label 'plotCoverage'
+
+    publishDir "${params.outdir}/coverage", mode: 'copy'
+
+    input:
+
+    output:
+    *.csv
+
+    script:
+    """
+    python bin/plot_coverage.py $folder coverage.csv ${sample}
+    """
+}

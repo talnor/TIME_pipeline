@@ -35,5 +35,8 @@ process shiver {
     ${sample}_cut_wRefs.fasta \
     ${forward} \
     ${reverse}
+
+    # Calculate depth of coverage
+    samtools depth -a -d 1000000 {sample}_remap.bam > ${sample}_remap_depth.csv
     """
 }
