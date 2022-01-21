@@ -1,0 +1,17 @@
+name: time_analysis
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - blast=2.5.0
+  - mafft=7.407
+  - trimmomatic=0.39
+  - smalt=0.7.6
+  - bwa=0.7.17
+  - bowtie2=2.4.4
+  - samtools=1.9
+  - picard=2.20.2
+  - bedtools=2.28.0
+  - spades=3.13.1
+
