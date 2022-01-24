@@ -1,3 +1,8 @@
+#!/usr/bin/env nextflow
+
+// enable dsl2
+nextflow.enable.dsl=2
+
 def help() {
 	log.info"""
 		nextflow <nextflow options> run main.nf <options>
@@ -27,10 +32,6 @@ if (params.help) {
 	help()
 		exit 0
 }
-if (params.profile){
-    println("Profile should have a single dash: -profile")
-    System.exit(1)
-}
 if (!params.input){
     println("Please specify input directory with --input")
     System.exit(1)
@@ -45,11 +46,10 @@ include {timeAnalysis} from './workflows/time.nf'
 
 workflow {
     // Find fastq files
-    Channel
-    .fromFilePairs( "${params.input}/**", size: 2 )
-    .filter { it =~/*.fastq.gz|*.fq.gz|.*.fastq|*.fq }
-    .ifEmpty { exit 1, "Cannot find fastq-files in input directory"}
-    .into{ch_fastq}
+    Channel.fromFilePairs( params.input, size: 2 )
+    .filter { it =~/.*.fastq.gz|.*.fq.gz|.*.fastq|.*.fq/ }
+    .ifEmpty { exit 1, "Cannot find fastq-files in input directory" }
+    .set{ch_fastq}
 
     Channel.fromPath(params.primers)
         .set{ ch_primersFile }
@@ -59,9 +59,11 @@ workflow {
         .set{ ch_shiverConfigFile }
     Channel.fromPath(params.initDir)
         .set{ ch_shiverInitDir }
+    Channel.fromPath(params.hostGenome)
+        .set{ ch_hostGenome }
 
     // run analysis
     main:
-    timeAnalysis(ch_fastq, ch_primersFile, ch_adaptersFile, ch_shiverConfigFile, ch_shiverInitDir)
+    timeAnalysis(ch_fastq, ch_primersFile, ch_adaptersFile, ch_shiverConfigFile, ch_shiverInitDir, ch_hostGenome)
 }
 

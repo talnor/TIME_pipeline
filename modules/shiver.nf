@@ -5,13 +5,8 @@ process shiver {
     publishDir "${params.outdir}/shiver", mode: 'copy'
 
     input:
-    #1 = the contigs.fasta path
-    #2 = a nice name as base for output
-    #3 = forward reads
-    #4 = reverse reads
-    #5 = an output folder
-    #6 = the shiver initDir
-    #7 = the config file
+    //assembly.out.contigs.combine(ch_shiverInitDir, ch_shiverConfigFile)
+    //  .join(hostDepletion.out.filtered)).view()
 
     output:
 
