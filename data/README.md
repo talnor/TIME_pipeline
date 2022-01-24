@@ -17,6 +17,8 @@ run command:
 
 Below follows a description of the files that are made available in this directory.
 
+### Primers
+Primers used when?
 | Version     | Primers     | Description | 
 | ----------- | ----------- | ----------- |
 | 1 | Primers_A_elife-11282-supp2-v2_PCR1-2_primers_A_primers_RC.fasta | Description       |
@@ -30,21 +32,35 @@ Below follows a description of the files that are made available in this directo
 | 9 | primers_B1_201203.fasta | Description       |
 | 10 | primers_B1_201203_PCR1.fasta | Description       |
 
+### Adapters
+Adaptors used when?
 | Version     | Adapters    | Description | 
 | ----------- | ----------- | ----------- |
 | 1 | adapters.fasta | Description | 
 
-| Version     | InitDir     | Description | 
-| ----------- | ----------- | ----------- |
-| 1 | InitDirShiver190405_BQ30 | Description | 
-
+### Shiver configuration file
 | Version     | Configurations | Description | 
 | ----------- | ----------- | ----------- |
 | 1 | original_config.sh | Default settings used in Shiver |
 | 2 | shiver_config_BQ30_notrimming.sh | Description |
 
+#### Configuration file 1
 
-### Shiver init directory 1
+The following options in Shiver are altered. For the full list of options see the default config.
+
+| Parameter   | Value       | Default     | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| TrimReadsForAdaptersAndQual      | false | true | Trim adapaters and low quality bases from reads using trimmomatic? |
+| TrimReadsForPrimers      | false | true | Trim exact matches to PCR primers from the end of reads using fastaq? |
+| mpileupOptions      | --min-BQ 30 | --min-BQ 5 | Higher quality threshold for individual bases |
+| deduplicate      | true | false | Remove read pairs marked as duplicates? This can cause loss of diversity in the reads due to true biological variation as well sequencing error. |
+
+### Shiver init directory
+| Version     | InitDir     | Description | 
+| ----------- | ----------- | ----------- |
+| 1 | InitDirShiver190405_BQ30 | Description |
+
+#### Shiver init directory 1
 
 **Name**: InitDirShiver190405_BQ30
 **Created**: 2019-04-05
@@ -56,7 +72,7 @@ Below follows a description of the files that are made available in this directo
 | Configurations      | version | Description |
 | References      | version | Description |
 
-### Shiver init directory 2
+#### Shiver init directory 2
 
 **Name**: 
 **Created**: 
@@ -67,14 +83,3 @@ Below follows a description of the files that are made available in this directo
 | Adapter      | version | Description | 
 | Configurations      | version | Description |
 | References      | version | Description |
-
-### Configuration file 1
-
-The following options in Shiver are altered. For the full list of options see the default config.
-
-| Parameter   | Value       | Default     | Description |
-| ----------- | ----------- | ----------- | ----------- |
-| TrimReadsForAdaptersAndQual      | false | true | Trim adapaters and low quality bases from reads using trimmomatic? |
-| TrimReadsForPrimers      | false | true | Trim exact matches to PCR primers from the end of reads using fastaq? |
-| mpileupOptions      | --min-BQ 30 | --min-BQ 5 | Higher quality threshold for individual bases |
-| deduplicate      | true | false | Remove read pairs marked as duplicates? This can cause loss of diversity in the reads due to true biological variation as well sequencing error. |
