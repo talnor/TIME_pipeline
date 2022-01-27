@@ -3,7 +3,7 @@ import sys
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn
+#import seaborn
 
 # Get data
 inputf = sys.argv[1]
@@ -11,7 +11,7 @@ sample = sys.argv[2]
 df = pd.read_csv(inputf, sep='\t')
 
 # Set plot style
-plt.style.use('seaborn')
+#plt.style.use('seaborn')
 #seaborn.set(rc={"xtick.bottom" : True, "ytick.left" : True})
 
 # Plot data

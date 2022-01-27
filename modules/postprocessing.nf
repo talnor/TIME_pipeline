@@ -13,11 +13,11 @@ process infectionEstimation {
 
     script:
     """
-    echo ${frequencies}
-    echo ${samples}
-    touch asd.csv
-    calculate_eti.py . ${params.min_cov_eti} \
-    > eti_calculations_${params.ticket}_${params.min_cov_eti}X_\$(date +'%Y%m%d-%H%M%S').csv
+    calculate_eti.py . \
+    ${params.coverage_threshold_eti} \
+    ${params.ticket} \
+    eti_calculations_${params.ticket}_${params.coverage_threshold_eti}X_\$(date +'%Y%m%d-%H%M%S').csv \
+    ${samples}
     """
 }
 

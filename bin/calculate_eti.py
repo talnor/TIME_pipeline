@@ -1,4 +1,5 @@
-"""Analyse the shiver BaseFreq files for 3 base variation to get estimates of intrapatient SNP variation"""
+#!/usr/bin/env python
+"""Analyse the shiver BaseFreq files to calculate estimated time of infection using intrapatient SNP variation"""
 
 import os
 import sys
@@ -6,14 +7,17 @@ import glob
 import pandas as pd
 import numpy as np
 
-inputdir = sys.argv[1]	#folder for the project
+inputdir = sys.argv[1]
 coverage_threshold = sys.argv[2]
+ticket = sys.argv[3]
+eti_summary = sys.argv[4]
+samples = sys.argv[5:]
 
 # diversity threshold (fraction) for distance calculations
-tc = 0.01
+diversity_threshold = 0.01
 
 # Per base coverage threshold for inclusion
-min_cov = coverage_threshold
+min_cov = int(coverage_threshold)
 
 # region
 pos_start = 2085
@@ -24,100 +28,122 @@ eti_m = 259
 eti_c = 0.05
 
 # Use every n'th base
-n = 3
+step = 3
 
 # Start base in codon
-base = 3
+start_base = 3
 
-#Get all the subdirectories i.e. sample directories
-subdirs = []
-for cont in os.listdir(inputdir):
-    if os.path.isdir(os.path.join(inputdir, cont)):
-        subdirs.append(cont) 
+def get_region_data(base_frequency_file, pos_start, start_base, pos_fin, step):
+    """Return base count data for region of interest"""
+    with open(base_frequency_file, 'r') as f:
+        all_data = pd.read_csv(f)
+    all_data.columns = ['HXB2_position', 'Reference_position', 'Reference_Base', 'A', 'C', 'G', 'T', 'gap', 'N']
+    positions_of_interest = range(pos_start + start_base - 1, pos_fin + 1, step)
+    pol = all_data[all_data['HXB2_position'].isin(i for i in positions_of_interest)]
+    return pol
 
-# Analyse each sample in the directory
-print('Project', 'Sample', 'Date', 'Distance', 'ETI', str(min_cov) + 'X_Coverage', '1000X_coverage', 'Average_coverage', sep=',')
-for sampledir in subdirs:
+def calculate_nucleotide_frequencies(pol):
+    """Normalize nucleotide counts"""
+    nucleotide_counts_per_base = pol[['A', 'C', 'G', 'T']]
+    total_counts_per_base = nucleotide_counts_per_base.sum(axis=1)
+    pol['total_bases'] = total_counts_per_base.values
+    nucleotide_frequency_per_base = nucleotide_counts_per_base.div(total_counts_per_base, axis='index')
+    nucleotide_frequency_per_base = nucleotide_frequency_per_base.replace([np.inf, -np.inf, '', np.nan], 0)
+    nucleotide_frequency_per_base.columns = ['freq_A', 'freq_C', 'freq_G', 'freq_T']
+    return pd.concat([pol, nucleotide_frequency_per_base], axis=1)
 
-    # Get the project name
-    proj_name = inputdir.strip().strip('/').split('/')[-1].split('_')[0]
+def calculate_average_coverage(pol):
+    """Calculate average coverage for a sample"""
+    return pol['total_bases'].mean()
 
-    # Get the sample base frequency file
-    files = sorted(glob.glob(os.path.join(inputdir, sampledir, 'shiver*', "*_remap_BaseFreqs_WithHXB2.csv")))
+def check_coverage_threshold(pol, min_cov):
+    """Check if coverage for each position is above threshold.
+    Returns percentage of bases that pass the coverage threshold"""
+    column = str(min_cov) + 'X_Coverage'
+    pol.loc[pol['total_bases'] >= min_cov, column] = 'Yes'
+    pol.loc[pol['total_bases'] < min_cov, column] = 'No'
+    if 'Yes' in pol[column].values:
+        pct_coverage = pol[column].value_counts()['Yes'] / len(pol) * 100
+    else:
+        pct_coverage = 0
+    return pct_coverage
 
-    # No results found    
-    if not files:
-        print(proj_name, sampledir, *(['-']*6), sep=',')
-        continue
+def remove_low_coverage_positions(pol, min_cov):
+    """Remove all positions with insufficient read depth"""
+    pol = pol[pol[str(min_cov) + 'X_Coverage'] == 'Yes']
+    return pol
 
-    # Calculate ETI
-    else:     
-        # Get the base of the file name
-        SID = os.path.basename(files[0])[:-4]
-        outfile = os.path.join(os.path.dirname(files[0]), SID + '_pairwise_distance.csv')
-        
-        with open(files[0], 'r') as f:
- 
-            # read the csv    
-            df = pd.read_csv(f)
-            df.columns = ['HXB2_position', 'Reference_position', 'Reference_Base', 'A', 'C', 'G', 'T', 'gap', 'N']
+def calculate_theta(pol, diversity_threshold):
+    """Calculate theta value for each position"""
+    major_base_frequency = pol[['A', 'C', 'G', 'T']].max(axis=1)
+    pol['freq_major_base'] = major_base_frequency.values
+    theta_array = np.where((1 - pol['freq_major_base']) > diversity_threshold, 1, 0)
+    pol['theta'] = theta_array.tolist()
+    pol.loc[pol['freq_major_base'] == 0, 'theta'] = 0
+    return pol
 
-            # Extract the third nucleotide for each codon in the pol gene region
-            pol = df[df['HXB2_position'].isin(str(i) for i in range(pos_start + base - 1, pos_fin + 1, n))]
+def calculate_diversity(pol):
+    """Calculate nucleotide diversity value for the sample"""
+    nucleotide_frequencies_per_base = pol[['freq_A', 'freq_C', 'freq_G', 'freq_T']]
+    diversity = nucleotide_frequencies_per_base * (1 - nucleotide_frequencies_per_base)
+    pol['diversity'] = diversity.sum(axis=1)
+    return pol
 
-            # Normalize nucleotide counts
-            pol_nucl = pol[['A', 'C', 'G', 'T']]
-            tot = pol_nucl.sum(axis=1)
-            pol_nucl = pol_nucl.div(tot, axis='index')
-            pol_nucl = pol_nucl.replace([np.inf, -np.inf, '', np.nan], 0)
-            pol_nucl.columns = ['freq_A', 'freq_C', 'freq_G', 'freq_T']
-            pol = pd.concat([pol, pol_nucl], axis=1)
-            
-            # Check coverage
-            avg_cov = tot.mean()
-            pol.loc[tot >= min_cov, str(min_cov) + 'X_Coverage'] = 'Yes'
-            pol.loc[tot < min_cov, str(min_cov) + 'X_Coverage'] = 'No'
-            pol.loc[tot >= 1000, '1000X_Coverage'] = 'Yes'
-            pol.loc[tot < 1000, '1000X_Coverage'] = 'No'
-            if 'Yes' in pol[str(min_cov) + 'X_Coverage'].values:
-                covMin = pol[str(min_cov) + 'X_Coverage'].value_counts()['Yes']/len(pol)*100
+def calculate_positional_distance(pol, diversity_threshold):
+    """Calculate the per base distance according to equation XX"""
+    pol = calculate_theta(pol, diversity_threshold)
+    pol = calculate_diversity(pol)
+    per_base_distance = pol['theta'] * pol['diversity']
+    pol['distance'] = per_base_distance.values
+    return pol
+
+def calculate_ETI(pairwise_distance, eti_m, eti_c):
+    """Calculate estimated time of infection (ETI) based on the average pairwise distance"""
+    eti = eti_m * pairwise_distance + eti_c
+    return eti
+
+with open(eti_summary, 'w') as out:
+    out.write(','.join(['Project', 'Sample', 'Distance', 'ETI', str(min_cov) + 'X_Coverage', '1000X_coverage', 'Average_coverage\n']))
+    for sample_info in samples:
+        sample_info = sample_info.strip().lstrip("[").strip("]").strip(",")
+        sample = sample_info.split("_")[1]
+        base_frequency_file = glob.glob(os.path.join(inputdir, "{}_remap_BaseFreqs_WithHXB2.csv".format(sample_info)))[0]
+        if not base_frequency_file:
+            template_data = [ticket, sample, '-', '-', '-', '-', '-', '-\n']
+            out.write(','.join(template_data))
+            continue
+        else:
+            pol = get_region_data(base_frequency_file, pos_start, start_base, pos_fin, step)
+            pol = calculate_nucleotide_frequencies(pol)
+            cov_average = calculate_average_coverage(pol)
+            cov_threshold = check_coverage_threshold(pol, min_cov)
+            cov_1000 = check_coverage_threshold(pol, 1000)
+            pol = remove_low_coverage_positions(pol, min_cov)
+            if pol.empty:
+                template_data = [ticket,
+                                 sample,
+                                 '-',
+                                 '-',
+                                 str(round(cov_threshold, 2)) + '%',
+                                 str(round(cov_1000, 2)) + '%',
+                                 str(int(round(cov_average))) + '\n']
+                out.write(','.join(template_data))
+                sample_outfile = sample + '_pairwise_distance.csv'
+                pol.to_csv(sample_outfile, sep=',', index=False)
+                continue
             else:
-                covMin = 0
-            if 'Yes' in pol['1000X_Coverage'].values:
-                cov1000 = pol['1000X_Coverage'].value_counts()['Yes']/len(pol)*100
-            else:
-                cov1000 = 0
-
-            # Calculate position diversity
-            major = pol_nucl.max(axis=1)
-            pol.insert(15, 'freq_major_base', major)
-            pol.insert(16, 'theta', np.where((1-pol['freq_major_base']) > tc, 1, 0))
-            pol.loc[pol['freq_major_base'] == 0, 'theta'] = 0
-            nucl_diversity = pol_nucl * (1 - pol_nucl)
-            pol.insert(17, 'diversity', nucl_diversity.sum(axis=1))
-
-            # Calculate sample distance and Estimated time of infection (ETI)
-            def calculate_ETI(pol, SID, covMin, cov1000, avg_cov, proj_name, eti_m, eti_c):
-
-                #Calculate per base distance
-                pol.insert(18, 'distance', pol['theta'] * pol['diversity'])
-
-                # Filter out positions with too low base coverage
-                pol_filtered = pol[pol[str(min_cov) + 'X_Coverage'] == 'Yes']
-
-                # Calculate pairwise distance and ETI for sample
-                pw_distance = pol_filtered['distance'].mean()
-                pol.insert(19, 'avg_pairwise_distance', pw_distance)
-                eti = eti_m * pw_distance + eti_c
-                pol.insert(20, 'ETI', eti)
-                
-                # Print and return results
-                sample_info = SID[:-25].split('_')
-                #sample_info = sample_info[1:]   ##if sample name is prepended with 'X_'
-                print(proj_name, sample_info[2], sample_info[0], pw_distance, eti, str(round(covMin, 2)) + '%', str(round(cov1000, 2)) + '%',  str(int(round(avg_cov))), sep=',')
-                return pol
-
-            pol = calculate_ETI(pol, SID, covMin, cov1000, avg_cov, proj_name, eti_m, eti_c)
-
-            # Output
-            pol.to_csv(outfile, sep=',', index=False)
+                pol = calculate_positional_distance(pol, diversity_threshold)
+                pairwise_distance = pol['distance'].mean()
+                pol['avg_pairwise_distance'] = pairwise_distance
+                eti = calculate_ETI(pairwise_distance, eti_m, eti_c)
+                pol['ETI'] = eti
+                out.write(','.join([ticket,
+                                    sample,
+                                    str(pairwise_distance),
+                                    str(eti),
+                                    str(round(cov_threshold, 2)) + '%',
+                                    str(round(cov_1000, 2)) + '%',
+                                    str(int(round(cov_average))) + '\n'
+                                    ]))
+                sample_outfile = sample + '_pairwise_distance.csv'
+                pol.to_csv(sample_outfile, sep=',', index=False)

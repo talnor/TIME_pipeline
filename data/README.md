@@ -26,7 +26,7 @@ Primers used when?
 | 3 | Primers_A_elife-11282-supp2-v2_PCR1_primers_A_primers_RC_Bprimers_fragment4.fasta | Description       |
 | 4 | Primers_A_elife-11282-supp2-v2_PCR2_primers_A_primers.fasta | Description       |
 | 5 | primers_1_amplicon_PCR1-2_190620.fasta | Description       |
-| 6 | primers_1_amplicon_PCR1_190620.fasta | Description       |
+| 6 | primers_1_amplicon_PCR1_190620.fasta | Full genome amplified with 1 primer pair |
 | 7 | primers_1_amplicon_PCR2_190620.fasta | Description       |
 | 8 | primers_B1_180119.fasta | Description       |
 | 9 | primers_B1_201203.fasta | Description       |

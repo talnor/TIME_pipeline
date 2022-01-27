@@ -26,7 +26,5 @@ workflow timeAnalysis {
     assembly(hostDepletion.out.filtered)
     shiver(assembly.out.contigs.combine(ch_shiverInitDir).combine(ch_shiverConfigFile)
         .join(hostDepletion.out.filtered))
-    shiver.out.basefreq.collect().view()
-    ch_fastq.map{ it[0] }.toSortedList().view()
     infectionEstimation(shiver.out.basefreq.collect(), ch_fastq.map{ it[0] }.collect())
 }
