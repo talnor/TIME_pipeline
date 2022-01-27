@@ -11,6 +11,7 @@ def help() {
 		-profile        Comma-separated list of run profiles to use: local,slurm,docker,singularity
 		--input         Input directory with fastq files
 		--outdir        Directory for results
+		--ticket        Batch name
 
 		Additional options:
 		--primers       Primers used during amplification [Default:?]
@@ -38,6 +39,10 @@ if (!params.input){
 }
 if (!params.outdir){
     println("Please specify directory for results with --outdir")
+    System.exit(1)
+}
+if (!params.ticket){
+    println("Please specify a name for the batch --ticket")
     System.exit(1)
 }
 

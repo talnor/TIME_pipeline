@@ -1,7 +1,7 @@
 FROM python:2
 
 RUN apt-get update && \
-  apt-get install -yq make git  && \
+  apt-get install -yq make git bc && \
   apt-get clean
 
 RUN pip install --upgrade pip
@@ -19,6 +19,8 @@ COPY requirements.yml /requirements.yml
 RUN /usr/miniconda3/bin/conda env create -f /requirements.yml && \
 /usr/miniconda3/bin/conda clean -a
 
-ENV PATH=/usr/miniconda3/envs/time_analysis/bin/:$PATH
+RUN git clone https://github.com/ChrisHIV/shiver.git
+
+ENV PATH=/usr/miniconda3/envs/time_analysis/bin/:/shiver:/shiver/tools:$PATH
 
 CMD [ "/bin/bash" ]

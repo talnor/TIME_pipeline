@@ -2,7 +2,7 @@ process trimming {
 
     label 'trimming'
 
-    publishDir "${params.outdir}/trimming/${sample}", mode: 'copy'
+    publishDir "${params.outdir}/${sample}/trimming/", mode: 'copy'
 
     input:
     tuple val(sample), path(reads), path(adapters)
@@ -29,9 +29,11 @@ process trimming {
 
 process hostDepletion {
 
+    maxForks 1
+
     label 'hostDepletion'
 
-    publishDir "${params.outdir}/hostdepletion", mode: 'copy'
+    publishDir "${params.outdir}/${sample}/hostdepletion", mode: 'copy'
 
     input:
     tuple val(sample), path(reads), path(database)
@@ -61,9 +63,11 @@ process hostDepletion {
 
 process hostStats {
 
+    maxForks 1
+
     label 'hostStats'
 
-    publishDir "${params.outdir}/hostStats", mode: 'copy'
+    publishDir "${params.outdir}/${sample}/hostStats", mode: 'copy'
 
     input:
     tuple val(sample), path("mapped.bam"), path(bam)
@@ -101,20 +105,22 @@ process hostStats {
 
 process assembly {
 
+    maxForks 1
+
     label 'assembly'
 
-    publishDir "${params.outdir}/assembly", mode: 'copy'
+    publishDir "${params.outdir}/${sample}/assembly", mode: 'copy'
 
     input:
     tuple val(sample), path(reads)
 
     output:
-    path("contigs.fasta"), emit: contigs
+    tuple val(sample), path("contigs.fasta"), emit: contigs
 
     script:
     """
     spades.py -t ${task.cpus} \
-    -1 ${reads[0]}  -2 ${reads[1]} \
+    -1 ${reads[0]} -2 ${reads[1]} \
     -o .
     """
 }

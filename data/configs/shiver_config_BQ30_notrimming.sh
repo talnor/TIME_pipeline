@@ -15,6 +15,7 @@ MinContigHitFrac=0.9
 # What do you have to type into the command line to make these commands execute?
 # (If the binary file lives in a directory that is not included in your $PATH
 # variable, you will need to include the path here.)
+python2='python2'
 BlastDBcommand='makeblastdb'
 BlastNcommand='blastn'
 smalt='smalt'
@@ -168,6 +169,13 @@ samtoolsReadFlags='-f 3 -F 4'
 # retained is 5 (for backward/historical consistency), and only the first
 # 1000000 reads mapped to each point will be considered (NB a limit must be
 # provided; the default is 250).
+# Important note for data with overlapping read pairs: samtools mpileup avoids
+# double counting sequence in the overlap of a read pair by setting the quality
+# of all bases in the overlap to zero, for one of the two reads in the pair;
+# then with any value of --min-BQ strictly greater than zero, these bases are
+# effectively deleted, such that the overlap sequence is counted only once.
+# If you set --min-BQ equal to zero, these bases will be counted (which is
+# generally undesirable).
 mpileupOptions='--no-BAQ --min-BQ 30 --max-depth 1000000'
 
 # Parameters for calling the consensus base at each position:

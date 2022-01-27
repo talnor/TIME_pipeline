@@ -6,8 +6,8 @@ include {trimming} from '../modules/preprocessing.nf'
 include {hostDepletion} from '../modules/preprocessing.nf'
 include {hostStats} from '../modules/preprocessing.nf'
 include {assembly} from '../modules/preprocessing.nf'
-//include {shiver} from '../modules/shiver.nf'
-//include {infectionEstimation} from '../modules/postprocessing.nf'
+include {shiver} from '../modules/shiver.nf'
+include {infectionEstimation} from '../modules/postprocessing.nf'
 
 workflow timeAnalysis {
     take:
@@ -24,9 +24,9 @@ workflow timeAnalysis {
     hostDepletion(trimming.out.trim.combine(ch_hostGenome))
     hostStats(hostDepletion.out.bam)
     assembly(hostDepletion.out.filtered)
-    //assembly.out.contigs.combine(ch_shiverInitDir, ch_shiverConfigFile)
-    //  .join(hostDepletion.out.filtered)).view()
-    //shiver(assembly.out.contigs.combine(ch_shiverInitDir, ch_shiverConfigFile)
-    //  .join(hostDepletion.out.filtered))
-    //infectionEstimation()
+    shiver(assembly.out.contigs.combine(ch_shiverInitDir).combine(ch_shiverConfigFile)
+        .join(hostDepletion.out.filtered))
+    shiver.out.basefreq.collect().view()
+    ch_fastq.map{ it[0] }.toSortedList().view()
+    infectionEstimation(shiver.out.basefreq.collect(), ch_fastq.map{ it[0] }.collect())
 }
