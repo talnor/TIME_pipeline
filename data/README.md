@@ -83,3 +83,13 @@ The following options in Shiver are altered. For the full list of options see th
 | Adapter      | version | Description | 
 | Configurations      | version | Description |
 | References      | version | Description |
+
+### References to use in Shiver alignments
+Reference compendiums with representative genomes can be downloaded from the 
+[LANL HIV database](http://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html).
+
+| Reference  file                | Description                                                          |
+| ------------------------------ | -------------------------------------------------------------------- |
+| HIV1_COM_2020_genome_DNA.fasta | Represenative genome alignment with references from 2020 and earlier |
+
+

@@ -5,6 +5,7 @@ process shiver {
     label 'shiver'
 
     publishDir "${params.outdir}/${sample}/shiver/", mode: 'copy'
+    publishDir "${params.outdir}/store/${sample}/", pattern: "*.{csv,txt,fasta,fai}", mode: 'copy'
 
     input:
     tuple val(sample), path(contigs), path(shiverInitDir), path(shiverConfigFile), path(reads)
@@ -12,6 +13,7 @@ process shiver {
     output:
     path("${sample}*"), emit: output
     path("${sample}_remap_BaseFreqs_WithHXB2.csv"), emit: basefreq
+    tuple val(sample), path("${sample}_remap_depth.csv"), emit: depth
 
     script:
     """
@@ -42,29 +44,32 @@ process ShiverInitialisation {
 
     label 'init'
 
-    publishDir "${params.outdir}/initdir", mode: 'copy'
+    publishDir "${params.outdir}/initdir/", mode: 'copy'
 
     input:
-
+    path(primers)
+    path(adapters)
+    path(config)
+    path(references)
 
     output:
-    path(${shiverInitDir})
+    path("shiverInitDir")
 
     script:
     """
     shiver_init.sh \
-    ${shiverInitDir} \
-    ${shiverConfigFile} \
+    ./shiverInitDir \
+    ${config} \
     ${references} \
     ${adapters} \
     ${primers}
 
-    echo $date > ${shiverInitDir}/setup.log
     echo shiver_init.sh \
-    ${shiverInitDir} \
-    ${shiverConfigFile} \
+    ./shiverInitDir \
+    ${config} \
     ${references} \
     ${adapters} \
-    ${primers} >> ${shiverInitDir}/setup.log
+    ${primers} > ./shiverInitDir/setup.log
+    cat .command.out .command.err > ./shiverInitDir/setup_build.log
     """
 }

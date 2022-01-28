@@ -8,9 +8,7 @@ process trimming {
     tuple val(sample), path(reads), path(adapters)
 
     output:
-    //tuple sample, path("${sample}_trimmed_1.fastq.gz"), path("${sample}_trimmed_2.fastq.gz"), emit: trim
     tuple val(sample), path("${sample}_trimmed_{1,2}.fastq.gz"), emit: trim
-    //tuple sample, path("${sample}_trimmed_unpaired_1.fastq.gz"), path("${sample}_trimmed_unpaired_2.fastq.gz"), emit: unpaired
     tuple val(sample), path("${sample}_trimmed_unpaired_{1,2}.fastq.gz"), emit: unpaired
 
     script:
@@ -33,7 +31,7 @@ process hostDepletion {
 
     label 'hostDepletion'
 
-    publishDir "${params.outdir}/${sample}/hostdepletion", mode: 'copy'
+    publishDir "${params.outdir}/${sample}/hostdepletion/", mode: 'copy'
 
     input:
     tuple val(sample), path(reads), path(database)
@@ -67,14 +65,14 @@ process hostStats {
 
     label 'hostStats'
 
-    publishDir "${params.outdir}/${sample}/hostStats", mode: 'copy'
+    publishDir "${params.outdir}/${sample}/hostStats/", mode: 'copy'
+    publishDir "${params.outdir}/store/${sample}/", pattern: "*.{txt,pdf}", mode: 'copy'
 
     input:
     tuple val(sample), path("mapped.bam"), path(bam)
 
     output:
-    path("*.txt")
-    path("*.pdf")
+    tuple path("*.txt"), path("*.pdf")
 
     script:
     """
@@ -109,18 +107,21 @@ process assembly {
 
     label 'assembly'
 
-    publishDir "${params.outdir}/${sample}/assembly", mode: 'copy'
+    publishDir "${params.outdir}/${sample}/assembly/", mode: 'copy'
+    publishDir "${params.outdir}/store/${sample}/", pattern: "*.fasta", mode: 'copy'
 
     input:
     tuple val(sample), path(reads)
 
     output:
     tuple val(sample), path("contigs.fasta"), emit: contigs
+    //tuple val(sample), path("${sample}_contigs.fasta"), emit: contigs
 
     script:
     """
     spades.py -t ${task.cpus} \
     -1 ${reads[0]} -2 ${reads[1]} \
     -o .
+    #mv contigs.fasta ${sample}_contigs.fasta
     """
 }

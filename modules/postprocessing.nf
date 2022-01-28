@@ -2,7 +2,9 @@ process infectionEstimation {
 
     label 'infectionEstimation'
 
-    publishDir "${params.outdir}/infectionEstimation", mode: 'copy'
+    publishDir "${params.outdir}/infectionEstimation/", mode: 'copy'
+    publishDir "${params.outdir}/store/", pattern: "eti*.csv", mode: 'copy'
+    publishDir "${params.outdir}/store/eti_calculations/", pattern: "*pairwise_distance*.csv", mode: 'copy'
 
     input:
     file(frequencies)
@@ -10,6 +12,7 @@ process infectionEstimation {
 
     output:
     path("*.csv")
+
 
     script:
     """
@@ -21,23 +24,21 @@ process infectionEstimation {
     """
 }
 
-//#python calculate_eti.py . ${params.min_cov_eti} \
-//#> eti_calculations_${params.ticket}_${params.min_cov_eti}X_\$(date +'%Y%m%d-%H%M%S').csv
-
-/*
 process plotCoverage {
 
     label 'plotCoverage'
 
-    publishDir "${params.outdir}/coverage", mode: 'copy'
+    publishDir "${params.outdir}/coverage/", mode: 'copy'
+    publishDir "${params.outdir}/store/${sample}/", pattern: "*.png", mode: 'copy'
 
     input:
+    tuple val(sample), path(coverageFile)
 
     output:
-    *.csv
+    path("*.png")
 
     script:
     """
-    python bin/plot_coverage.py $folder coverage.csv ${sample}
+    plot_coverage.py ${coverageFile} ${sample}
     """
-}*/
+}

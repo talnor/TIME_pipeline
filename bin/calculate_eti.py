@@ -118,6 +118,7 @@ with open(eti_summary, 'w') as out:
             cov_average = calculate_average_coverage(pol)
             cov_threshold = check_coverage_threshold(pol, min_cov)
             cov_1000 = check_coverage_threshold(pol, 1000)
+            pol_unfiltered = pol.copy(deep=True)
             pol = remove_low_coverage_positions(pol, min_cov)
             if pol.empty:
                 template_data = [ticket,
@@ -128,8 +129,8 @@ with open(eti_summary, 'w') as out:
                                  str(round(cov_1000, 2)) + '%',
                                  str(int(round(cov_average))) + '\n']
                 out.write(','.join(template_data))
-                sample_outfile = sample + '_pairwise_distance.csv'
-                pol.to_csv(sample_outfile, sep=',', index=False)
+                sample_outfile = sample + '_pairwise_distance_low_coverage.csv'
+                pol_unfiltered.to_csv(sample_outfile, sep=',', index=False)
                 continue
             else:
                 pol = calculate_positional_distance(pol, diversity_threshold)
