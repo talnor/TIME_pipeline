@@ -18,7 +18,6 @@ run command:
 Below follows a description of the files that are made available in this directory.
 
 ### Primers
-Primers used when?
 | Version     | Primers     | Description | 
 | ----------- | ----------- | ----------- |
 | 1 | Primers_A_elife-11282-supp2-v2_PCR1-2_primers_A_primers_RC.fasta | Description       |
@@ -33,10 +32,9 @@ Primers used when?
 | 10 | primers_B1_201203_PCR1.fasta | Description       |
 
 ### Adapters
-Adaptors used when?
-| Version     | Adapters    | Description | 
-| ----------- | ----------- | ----------- |
-| 1 | adapters.fasta | Description | 
+| Version     | Adapters    | Description           | 
+| ----------- | ----------- | --------------------- |
+| 1 | NexteraPE-PE.fa | Nextera paired-end adapters | 
 
 ### Shiver configuration file
 | Version     | Configurations | Description | 
@@ -74,15 +72,15 @@ The following options in Shiver are altered. For the full list of options see th
 
 #### Shiver init directory 2
 
-**Name**: 
-**Created**: 
+**Name**: InitDirShiver220128_BQ30_1amp 
+**Created**: 2022-01-28
 
-| Content     | Version     | Description | 
-| ----------- | ----------- | ----------- |
-| Primer      | version | Description |
-| Adapter      | version | Description | 
-| Configurations      | version | Description |
-| References      | version | Description |
+| Content     | Version     |
+| ----------- | ----------- |
+| Primer      | primers_1_amplicon_PCR1_190620.fasta
+| Adapter      | NexteraPE-PE.fa | 
+| Configurations      | shiver_config_BQ30_notrimming.sh |
+| References      | HIV1_COM_2020_genome_DNA.fasta' |
 
 ### References to use in Shiver alignments
 Reference compendiums with representative genomes can be downloaded from the 
