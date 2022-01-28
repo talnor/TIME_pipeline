@@ -5,7 +5,7 @@ process trimming {
     publishDir "${params.outdir}/${sample}/trimming/", mode: 'copy'
 
     input:
-    tuple val(sample), path(reads), path(adapters)
+    tuple val(sample), path(reads), path(adapters), path(primers)
 
     output:
     tuple val(sample), path("${sample}_trimmed_{1,2}.fastq.gz"), emit: trim
@@ -13,11 +13,12 @@ process trimming {
 
     script:
     """
+    cat ${adapters} ${primers} > adapters_primers.fasta
     trimmomatic PE -threads ${task.cpus} \
     ${reads[0]} ${reads[1]} \
     ${sample}_trimmed_1.fastq.gz ${sample}_trimmed_unpaired_1.fastq.gz \
     ${sample}_trimmed_2.fastq.gz ${sample}_trimmed_unpaired_2.fastq.gz \
-    ILLUMINACLIP:${adapters}:2:10:7:1:false \
+    ILLUMINACLIP:adapters_primers.fasta:2:10:7:1:false \
     LEADING:20 \
     TRAILING:20 \
     SLIDINGWINDOW:4:20 \
@@ -26,8 +27,6 @@ process trimming {
 }
 
 process hostDepletion {
-
-    maxForks 1
 
     label 'hostDepletion'
 
@@ -60,8 +59,6 @@ process hostDepletion {
 }
 
 process hostStats {
-
-    maxForks 1
 
     label 'hostStats'
 
@@ -103,8 +100,6 @@ process hostStats {
 
 process assembly {
 
-    maxForks 1
-
     label 'assembly'
 
     publishDir "${params.outdir}/${sample}/assembly/", mode: 'copy'
@@ -114,14 +109,13 @@ process assembly {
     tuple val(sample), path(reads)
 
     output:
-    tuple val(sample), path("contigs.fasta"), emit: contigs
-    //tuple val(sample), path("${sample}_contigs.fasta"), emit: contigs
+    tuple val(sample), path("${sample}_contigs.fasta"), emit: contigs
 
     script:
     """
     spades.py -t ${task.cpus} \
     -1 ${reads[0]} -2 ${reads[1]} \
     -o .
-    #mv contigs.fasta ${sample}_contigs.fasta
+    mv contigs.fasta ${sample}_contigs.fasta
     """
 }

@@ -20,7 +20,7 @@ workflow timeAnalysis {
       ch_hostGenome
 
     main:
-        trimming(ch_fastq.combine(ch_adaptersFile))
+        trimming(ch_fastq.combine(ch_adaptersFile).combine(ch_primersFile))
         hostDepletion(trimming.out.trim.combine(ch_hostGenome))
         hostStats(hostDepletion.out.bam)
         assembly(hostDepletion.out.filtered)

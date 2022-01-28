@@ -1,7 +1,5 @@
 process shiver {
 
-    maxForks 1
-
     label 'shiver'
 
     publishDir "${params.outdir}/${sample}/shiver/", mode: 'copy'

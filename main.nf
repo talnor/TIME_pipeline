@@ -19,6 +19,7 @@ def help() {
 		--initDir       Shiver initialization directory for configurations
 		--config        Shiver configuration file [Default:?]
 		--min_cov_eti   Coverage threshold in time of infection calculations [Default: 300]
+		--large         Use more computing resources
 		--help          Display this help message and exit
 
 		Initialisation of Shiver directory:

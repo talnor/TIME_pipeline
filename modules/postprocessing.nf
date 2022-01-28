@@ -13,7 +13,6 @@ process infectionEstimation {
     output:
     path("*.csv")
 
-
     script:
     """
     calculate_eti.py . \
