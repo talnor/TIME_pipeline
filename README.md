@@ -32,12 +32,24 @@ detail [here](data/README.md).
 ### Run Shiver initialisation
 Shiver initilisation directories are included in this repository. Information on these are 
 available [here](data/README.md). To create your own initilisation directory, run the following command:
-`nextflow run main.nf --init -profile slurm,singularity --primers <primers.fasta> --adapters <adapters.fasta> --config <shiver_config.sh> --references <references.fasta>`
+```
+nextflow run main.nf --init -profile slurm,singularity --primers <primers.fasta> --adapters <adapters.fasta> --config <shiver_config.sh> --references <references.fasta>
+```
 
 ## Usage
 `conda activate time_analysis`
 
-`nextflow run main.nf -profile slurm,singularity --input 'path/to/*_R{1,2}.fastq.gz' --outdir path/to/results/ --ticket <batch_name>`
+Basic usage:
+
+```
+nextflow run main.nf -profile slurm,singularity --input 'path/to/*_R{1,2}.fastq.gz' --outdir path/to/results/ --ticket <batch_name>
+```
+
+The pipeline can be executed on your **local** computer or with a **slurm** resource manager. The container can be run using 
+**docker** or **singularity**. The above command would run the pipeline using slurm and singularity. 
 
 ## Options
-
+Check the command help for more info and options.
+```
+nextflow run main.nf --help
+```
