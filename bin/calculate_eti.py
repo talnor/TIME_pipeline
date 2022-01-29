@@ -1,5 +1,12 @@
 #!/usr/bin/env python
-"""Analyse the shiver BaseFreq files to calculate estimated time of infection using intrapatient SNP variation"""
+"""Analyse the shiver BaseFreq files to calculate estimated time of infection using intrapatient SNP variation.
+
+Calculcations are based on equation 2 in the following publication:
+Puller V, Neher R, Albert J (2017), Estimating time of HIV-1 infection from next-generation sequence diversity.
+PLoS Comput Biol 13(10): e1005775. https://doi.org/10.1371/journal.pcbi.1005775
+As well as using ETI calculations from:
+https://hiv.biozentrum.unibas.ch/ETI/
+"""
 
 import os
 import sys
@@ -90,7 +97,7 @@ def calculate_diversity(pol):
     return pol
 
 def calculate_positional_distance(pol, diversity_threshold):
-    """Calculate the per base distance according to equation XX"""
+    """Calculate the per base distance"""
     pol = calculate_theta(pol, diversity_threshold)
     pol = calculate_diversity(pol)
     per_base_distance = pol['theta'] * pol['diversity']
@@ -98,7 +105,7 @@ def calculate_positional_distance(pol, diversity_threshold):
     return pol
 
 def calculate_ETI(pairwise_distance, eti_m, eti_c):
-    """Calculate estimated time of infection (ETI) based on the average pairwise distance"""
+    """Calculate estimated time of infection (ETI)"""
     eti = eti_m * pairwise_distance + eti_c
     return eti
 
