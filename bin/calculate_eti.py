@@ -61,6 +61,22 @@ def get_region_data(base_frequency_file, pos_start, start_base, pos_fin, step):
     return pol
 
 
+def output_template_data(data, ticket, sample, cov_threshold=0, cov_1000=0, cov_average=0):
+    """Output template data for samples with insuffiecient or 0 coverage in entire region of interest"""
+    template_data = [
+        ticket,
+        sample,
+        "-",
+        "-",
+        str(round(cov_threshold, 2)) + "%",
+        str(round(cov_1000, 2)) + "%",
+        str(int(round(cov_average))) + "\n",
+    ]
+    out.write(",".join(template_data))
+    sample_outfile = sample + "_pairwise_distance_low_coverage.csv"
+    data.to_csv(sample_outfile, sep=",", index=False)
+
+
 def calculate_nucleotide_frequencies(pol):
     """Normalize nucleotide counts"""
     nucleotide_counts_per_base = pol[["A", "C", "G", "T"]]
@@ -167,21 +183,13 @@ with open(eti_summary, "w") as out:
             cov_average = calculate_average_coverage(pol)
             cov_threshold = check_coverage_threshold(pol, min_cov)
             cov_1000 = check_coverage_threshold(pol, 1000)
+            if pol.empty:
+                output_template_data(pol_unfiltered, ticket, sample, cov_threshold, cov_1000, cov_average)
+                continue
             pol_unfiltered = pol.copy(deep=True)
             pol = remove_low_coverage_positions(pol, min_cov)
             if pol.empty:
-                template_data = [
-                    ticket,
-                    sample,
-                    "-",
-                    "-",
-                    str(round(cov_threshold, 2)) + "%",
-                    str(round(cov_1000, 2)) + "%",
-                    str(int(round(cov_average))) + "\n",
-                ]
-                out.write(",".join(template_data))
-                sample_outfile = sample + "_pairwise_distance_low_coverage.csv"
-                pol_unfiltered.to_csv(sample_outfile, sep=",", index=False)
+                output_template_data(pol_unfiltered, ticket, sample, cov_threshold, cov_1000, cov_average)
                 continue
             else:
                 pol = calculate_positional_distance(pol, diversity_threshold)
