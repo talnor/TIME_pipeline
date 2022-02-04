@@ -61,7 +61,7 @@ def get_region_data(base_frequency_file, pos_start, start_base, pos_fin, step):
     return pol
 
 
-def output_template_data(data, ticket, sample, cov_threshold=0, cov_1000=0, cov_average=0):
+def output_template_data(data, ticket, sample, cov_average, cov_threshold=0, cov_1000=0):
     """Output template data for samples with insuffiecient or 0 coverage in entire region of interest"""
     template_data = [
         ticket,
@@ -181,15 +181,15 @@ with open(eti_summary, "w") as out:
             )
             pol = calculate_nucleotide_frequencies(pol)
             cov_average = calculate_average_coverage(pol)
+            if pol.empty:
+                output_template_data(pol, ticket, sample, cov_average)
+                continue
             cov_threshold = check_coverage_threshold(pol, min_cov)
             cov_1000 = check_coverage_threshold(pol, 1000)
-            if pol.empty:
-                output_template_data(pol_unfiltered, ticket, sample, cov_threshold, cov_1000, cov_average)
-                continue
             pol_unfiltered = pol.copy(deep=True)
             pol = remove_low_coverage_positions(pol, min_cov)
             if pol.empty:
-                output_template_data(pol_unfiltered, ticket, sample, cov_threshold, cov_1000, cov_average)
+                output_template_data(pol_unfiltered, ticket, sample, cov_average, cov_threshold, cov_1000)
                 continue
             else:
                 pol = calculate_positional_distance(pol, diversity_threshold)
