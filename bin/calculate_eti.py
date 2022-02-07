@@ -44,20 +44,21 @@ start_base = 3
 def get_region_data(base_frequency_file, pos_start, start_base, pos_fin, step):
     """Return base count data for region of interest"""
     with open(base_frequency_file, "r") as f:
-        all_data = pd.read_csv(f)
-    all_data.columns = [
-        "HXB2_position",
-        "Reference_position",
-        "Reference_Base",
-        "A",
-        "C",
-        "G",
-        "T",
-        "gap",
-        "N",
-    ]
+        columns = {
+            "HXB2_position": str,
+            "Reference_position": str,
+            "Reference_Base": str,
+            "A": float,
+            "C": float,
+            "G": float,
+            "T": float,
+            "gap": float,
+            "N": float,
+        }
+        all_data = pd.read_csv(f, header=0, names=list(columns.keys()))
+        all_data.astype(columns)
     positions_of_interest = range(pos_start + start_base - 1, pos_fin + 1, step)
-    pol = all_data[all_data["HXB2_position"].isin(i for i in positions_of_interest)]
+    pol = all_data[all_data["HXB2_position"].isin(str(i) for i in positions_of_interest)]
     return pol
 
 
@@ -181,9 +182,6 @@ with open(eti_summary, "w") as out:
             )
             pol = calculate_nucleotide_frequencies(pol)
             cov_average = calculate_average_coverage(pol)
-            if pol.empty:
-                output_template_data(pol, ticket, sample, cov_average)
-                continue
             cov_threshold = check_coverage_threshold(pol, min_cov)
             cov_1000 = check_coverage_threshold(pol, 1000)
             pol_unfiltered = pol.copy(deep=True)
