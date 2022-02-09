@@ -6,7 +6,7 @@ RUN apt-get update && \
 
 RUN pip install --upgrade pip
 RUN pip install 'numpy==1.16.6' && \
-pip install 'biopython==1.68' 'pyfastaq==3.17.0'
+pip install 'biopython==1.68'
 
 RUN curl -L https://repo.continuum.io/miniconda/Miniconda3-4.7.12.1-Linux-x86_64.sh -O && \
     bash Miniconda3-4.7.12.1-Linux-x86_64.sh -bf -p /usr/miniconda3/ && \
@@ -22,5 +22,7 @@ RUN /usr/miniconda3/bin/conda env create -f /requirements.yml && \
 RUN git clone https://github.com/ChrisHIV/shiver.git
 
 ENV PATH=/usr/miniconda3/envs/time_analysis/bin/:/shiver:/shiver/tools:$PATH
+
+RUN pip3 install 'pyfastaq==3.17.0'
 
 CMD [ "/bin/bash" ]
