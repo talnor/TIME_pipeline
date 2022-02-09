@@ -1,0 +1,9 @@
+
+
+Building a new DB, current time: 01/28/2022 17:31:00
+New DB name:   /Users/tanja.normark/Documents/Development/talnor/TIME_pipeline/workdir_init/work/a2/5c171287632d161481c26e77628c7e/shiverInitDir/ExistingRefsBlastDatabase
+New DB title:  /Users/tanja.normark/Documents/Development/talnor/TIME_pipeline/workdir_init/work/a2/5c171287632d161481c26e77628c7e/shiverInitDir/ExistingRefsUngapped.fasta
+Sequence type: Nucleotide
+Keep MBits: T
+Maximum file size: 1000000000B
+Adding sequences from FASTA; added 198 sequences in 0.204966 seconds.
