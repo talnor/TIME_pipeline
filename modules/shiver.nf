@@ -2,6 +2,8 @@ process shiver {
 
     label 'shiver'
 
+    errorStrategy { task.exitStatus == 3 ? 'ignore' : 'terminate' }
+
     publishDir "${params.outdir}/${sample}/shiver/", mode: 'copy'
     publishDir "${params.outdir}/store/${sample}/", pattern: "*.{csv,txt,fasta,fai}", mode: 'copy'
 
@@ -21,7 +23,13 @@ process shiver {
     ${shiverConfigFile} \
     ${contigs} \
     ${sample}
-
+    
+    if [ -f "${sample}_cut_wRefs.fasta" ]; then
+        correctedContigs=${sample}_cut_wRefs.fasta
+    else
+        correctedContigs=${sample}_raw_wRefs.fasta
+    fi
+    
     # Map reads with Shiver
     shiver_map_reads.sh \
     ${shiverInitDir} \
@@ -29,7 +37,7 @@ process shiver {
     ${contigs} \
     ${sample} \
     ${sample}.blast \
-    ${sample}_cut_wRefs.fasta \
+    \${correctedContigs} \
     ${reads[0]} \
     ${reads[1]}
 
