@@ -171,14 +171,14 @@ with open(eti_summary, "w") as out:
             os.path.join(
                 inputdir, "{}_remap_BaseFreqs_WithHXB2.csv".format(sample_info)
             )
-        )[0]
-        if not base_frequency_file:
-            template_data = [ticket, sample, "-", "-", "-", "-", "-", "-\n"]
+        )
+        if len(base_frequency_file) == 0:
+            template_data = [ticket, sample, "-", "-", "0%", "0%", "0\n"]
             out.write(",".join(template_data))
             continue
         else:
             pol = get_region_data(
-                base_frequency_file, pos_start, start_base, pos_fin, step
+                base_frequency_file[0], pos_start, start_base, pos_fin, step
             )
             pol = calculate_nucleotide_frequencies(pol)
             cov_average = calculate_average_coverage(pol)
