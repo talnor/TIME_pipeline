@@ -20,16 +20,16 @@ Below follows a description of the files that are made available in this directo
 ### Primers
 | Version     | Primers     | Description | 
 | ----------- | ----------- | ----------- |
-| 1 | Primers_A_elife-11282-supp2-v2_PCR1-2_primers_A_primers_RC.fasta | Description       |
-| 2 | Primers_A_elife-11282-supp2-v2_PCR1_primers_A_primers_RC.fasta | Description       |
-| 3 | Primers_A_elife-11282-supp2-v2_PCR1_primers_A_primers_RC_Bprimers_fragment4.fasta | Description       |
-| 4 | Primers_A_elife-11282-supp2-v2_PCR2_primers_A_primers.fasta | Description       |
-| 5 | primers_1_amplicon_PCR1-2_190620.fasta | Description       |
+| 1 | Primers_A_elife-11282-supp2-v2_PCR1-2_primers_A_primers_RC.fasta |        |
+| 2 | Primers_A_elife-11282-supp2-v2_PCR1_primers_A_primers_RC.fasta |        |
+| 3 | Primers_A_elife-11282-supp2-v2_PCR1_primers_A_primers_RC_Bprimers_fragment4.fasta |        |
+| 4 | Primers_A_elife-11282-supp2-v2_PCR2_primers_A_primers.fasta |        |
+| 5 | primers_1_amplicon_PCR1-2_190620.fasta |        |
 | 6 | primers_1_amplicon_PCR1_190620.fasta | Full genome amplified with 1 primer pair |
-| 7 | primers_1_amplicon_PCR2_190620.fasta | Description       |
-| 8 | primers_B1_180119.fasta | Description       |
-| 9 | primers_B1_201203.fasta | Description       |
-| 10 | primers_B1_201203_PCR1.fasta | Description       |
+| 7 | primers_1_amplicon_PCR2_190620.fasta |        |
+| 8 | primers_B1_180119.fasta |        |
+| 9 | primers_B1_201203.fasta |        |
+| 10 | primers_B1_201203_PCR1.fasta |        |
 
 ### Adapters
 | Version     | Adapters    | Description           | 
@@ -40,9 +40,9 @@ Below follows a description of the files that are made available in this directo
 | Version     | Configurations | Description | 
 | ----------- | ----------- | ----------- |
 | 1 | original_config.sh | Default settings used in Shiver |
-| 2 | shiver_config_BQ30_notrimming.sh | Description |
+| 2 | shiver_config_BQ30_notrimming.sh | TIME-study settings |
 
-#### Configuration file 1
+#### Configuration file 2
 
 The following options in Shiver are altered. For the full list of options see the default config.
 
@@ -56,19 +56,13 @@ The following options in Shiver are altered. For the full list of options see th
 ### Shiver init directory
 | Version     | InitDir     | Description | 
 | ----------- | ----------- | ----------- |
-| 1 | InitDirShiver190405_BQ30 | Description |
+| 1 | InitDirShiver190405_BQ30 |  |
+| 1 | InitDirShiver220128_BQ30_1amp | 1 amplicon primers, 2020 references |
 
 #### Shiver init directory 1
 
 **Name**: InitDirShiver190405_BQ30
 **Created**: 2019-04-05
-
-| Content     | Version     | Description | 
-| ----------- | ----------- | ----------- |
-| Primer      | version | Description |
-| Adapter      | version | Description | 
-| Configurations      | version | Description |
-| References      | version | Description |
 
 #### Shiver init directory 2
 
