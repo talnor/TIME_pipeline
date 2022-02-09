@@ -69,7 +69,7 @@ The following options in Shiver are altered. For the full list of options see th
 **Name**: InitDirShiver220128_BQ30_1amp 
 **Created**: 2022-01-28
 
-| Content     | Version     |
+| Content     | Description     |
 | ----------- | ----------- |
 | Primer      | primers_1_amplicon_PCR1_190620.fasta
 | Adapter      | NexteraPE-PE.fa | 
