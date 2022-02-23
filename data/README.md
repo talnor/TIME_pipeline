@@ -107,5 +107,6 @@ Reference compendiums with representative genomes can be downloaded from the
 | Reference  file                | Description                                                          |
 | ------------------------------ | -------------------------------------------------------------------- |
 | HIV1_COM_2020_genome_DNA.fasta | Represenative genome alignment with references from 2020 and earlier. |
+| HIV1_COM_2020_547-9592_DNA.fasta | Represenative genome alignment with references from 2020 and earlier. Genomic positions 547-9592 included. |
 | HIV1_COM_2017_547-9592_DNA_2018Compendium.fasta | Represenative genome alignment with references from 2018 and earlier. Genomic positions 547-9592 included. |
 
