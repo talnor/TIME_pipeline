@@ -33,7 +33,7 @@ detail [here](data/README.md).
 Shiver initilisation directories are included in this repository. Information on these are 
 available [here](data/README.md). To create your own initilisation directory, run the following command:
 ```
-nextflow run main.nf --init -profile slurm,singularity --primers <primers.fasta> --adapters <adapters.fasta> --config <shiver_config.sh> --references <references.fasta>
+nextflow run main.nf --init -profile slurm,singularity --primers <primers.fasta> --adapters <adapters.fasta> --config <shiver_config.sh> --references <references.fasta> --outdir <outdir>
 ```
 
 ## Usage

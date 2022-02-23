@@ -67,11 +67,24 @@ The following options in Shiver are altered. For the full list of options see th
 ### Shiver init directory
 | Version     | InitDir     | Description | 
 | ----------- | ----------- | ----------- |
-| 1 | InitDirShiver220128_BQ30_1amp | 1 amplicon primers, 2020 references |
-| 2 | InitDirShiver190405_BQ30 |  |
-| 3 | InitDirShiver191022_BQ30_PANHIV | 1 amplicon primers, 2018 references |
+| 1 | InitDirShiver220223_BQ30_1amp | 1 amplicon primers, 2020 references, no UTRs |
+| 2 | InitDirShiver220128_BQ30_1amp | 1 amplicon primers, 2020 references |
+| 3 | InitDirShiver190405_BQ30 |  |
+| 4 | InitDirShiver191022_BQ30_PANHIV | 1 amplicon primers, 2018 references |
 
 #### Shiver init directory 1
+
+**Name**: InitDirShiver220223_BQ30_1amp 
+**Created**: 2022-02-23
+
+| Content     | Description     |
+| ----------- | ----------- |
+| Primer      | primers_1_amplicon_PCR1_190620.fasta | 
+| Adapter      | NexteraPE-PE.fa | 
+| Configurations      | shiver_config_BQ30_notrimming.sh |
+| References      | HIV1_COM_2020_547-9592_DNA.fasta |
+
+#### Shiver init directory 2
 
 **Name**: InitDirShiver220128_BQ30_1amp 
 **Created**: 2022-01-28
@@ -81,14 +94,14 @@ The following options in Shiver are altered. For the full list of options see th
 | Primer      | primers_1_amplicon_PCR1_190620.fasta | 
 | Adapter      | NexteraPE-PE.fa | 
 | Configurations      | shiver_config_BQ30_notrimming.sh |
-| References      | HIV1_COM_2020_genome_DNA.fasta' |
+| References      | HIV1_COM_2020_genome_DNA.fasta |
 
-#### Shiver init directory 2
+#### Shiver init directory 3
 
 **Name**: InitDirShiver190405_BQ30
 **Created**: 2019-04-05
 
-#### Shiver init directory 3
+#### Shiver init directory 4
 
 **Name**: InitDirShiver191022_BQ30_PANHIV 
 **Created**: 2019-10-22
