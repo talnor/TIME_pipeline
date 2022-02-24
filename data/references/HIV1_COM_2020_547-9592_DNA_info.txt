@@ -1,0 +1,11 @@
+Downloaded from https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html 
+Download date: 2022-02-23
+Alignment type: Compendium
+Year: 2020
+Organism: HIV-1/SIVcpz
+DNA/Protein: DNA
+Region: User-defined range (547-9592 from genome alignment. Coordinates in the aligned sequences:662 - 11344)
+Subtype: ALL
+Format: FASTA
+Alignment ID : 120MG1
+Number of sequences: 198

@@ -44,7 +44,7 @@ start_base = 3
 def get_region_data(base_frequency_file, pos_start, start_base, pos_fin, step):
     """Return base count data for region of interest"""
     with open(base_frequency_file, "r") as f:
-        column_names = [
+        headers = [
             "HXB2_position",
             "Reference_position",
             "Reference_Base",
@@ -66,7 +66,7 @@ def get_region_data(base_frequency_file, pos_start, start_base, pos_fin, step):
             "gap": float,
             "N": float,
         }
-        all_data = pd.read_csv(f, header=0, names=column_names)
+        all_data = pd.read_csv(f, header=0, names=headers)
         all_data.astype(columns)
     positions_of_interest = range(pos_start + start_base - 1, pos_fin + 1, step)
     pol = all_data[all_data["HXB2_position"].isin(str(i) for i in positions_of_interest)]
@@ -130,7 +130,7 @@ def remove_low_coverage_positions(pol, min_cov):
 
 def calculate_theta(pol, diversity_threshold):
     """Calculate theta value for each position"""
-    major_base_frequency = pol[["A", "C", "G", "T"]].max(axis=1)
+    major_base_frequency = pol[["freq_A", "freq_C", "freq_G", "freq_T"]].max(axis=1)
     pol["freq_major_base"] = major_base_frequency.values
     theta_array = np.where((1 - pol["freq_major_base"]) > diversity_threshold, 1, 0)
     pol["theta"] = theta_array.tolist()
