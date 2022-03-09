@@ -29,7 +29,7 @@ def help() {
 		--initDir           Shiver initialization directory for configurations
 		--config            Shiver configuration file [Default:?]
 		--references        HIV reference dataset
-		--hostGenome        Directory with reference database for host genome
+        --hostGenome        Directory with reference database for host genome
         --hostGenomeBase    Name of reference database for host genome
         --hostURL           URL to download host reference genome from
 		--min_cov_eti       Coverage threshold in time of infection calculations [Default: 300]
