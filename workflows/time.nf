@@ -2,6 +2,7 @@
 nextflow.enable.dsl=2
 
 // import modules
+include {getVersions} from '../modules/version.nf'
 include {trimming} from '../modules/preprocessing.nf'
 include {hostDepletion} from '../modules/preprocessing.nf'
 include {hostStats} from '../modules/preprocessing.nf'
@@ -20,12 +21,13 @@ workflow timeAnalysis {
       ch_hostGenome
 
     main:
-        trimming(ch_fastq.combine(ch_adaptersFile).combine(ch_primersFile))
-        hostDepletion(trimming.out.trim.combine(ch_hostGenome))
-        hostStats(hostDepletion.out.bam)
-        assembly(hostDepletion.out.filtered)
-        shiver(assembly.out.contigs.combine(ch_shiverInitDir).combine(ch_shiverConfigFile)
-            .join(hostDepletion.out.filtered))
-        infectionEstimation(shiver.out.basefreq.collect(), ch_fastq.map{ it[0] }.collect())
-        plotCoverage(shiver.out.depth)
+        getVersions()
+        //trimming(ch_fastq.combine(ch_adaptersFile).combine(ch_primersFile))
+        //hostDepletion(trimming.out.trim.combine(ch_hostGenome))
+        //hostStats(hostDepletion.out.bam)
+        //assembly(hostDepletion.out.filtered)
+        //shiver(assembly.out.contigs.combine(ch_shiverInitDir).combine(ch_shiverConfigFile)
+        //    .join(hostDepletion.out.filtered))
+        //infectionEstimation(shiver.out.basefreq.collect(), ch_fastq.map{ it[0] }.collect())
+        //plotCoverage(shiver.out.depth)
 }
