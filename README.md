@@ -29,6 +29,13 @@ Important settings to change include:
 In addition, default settings for primers, adapters and similar configurations are described in more 
 detail [here](data/README.md).
 
+### Download host reference genome
+Set `nextflow.config` parameter `hostURL` to the URL of the host reference genome of your choice. 
+Then set up the host database with the following command:
+```
+nextflow run main.nf --setup -profile slurm,singularity
+```
+
 ### Run Shiver initialisation
 Shiver initilisation directories are included in this repository. Information on these are 
 available [here](data/README.md). To create your own initilisation directory, run the following command:
