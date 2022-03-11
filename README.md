@@ -1,5 +1,13 @@
 # TIME_pipeline
-Determining time of infection for human immunodeficiency viruses
+Determining time of infection for human immunodeficiency viruses.
+
+The analysis builds upon the [Shiver tool](https://github.com/ChrisHIV/shiver) for mapping paired-end short reads to a 
+custom reference sequence constructed using do novo assembled contigs. Base frequencies from the alignment are then
+used to calculate the time of infection based on the accumulated mutations in the pol gene as described in the 
+publication by Puller et al.
+
+> Neher R, Albert J (2017), Estimating time of HIV-1 infection from next-generation sequence diversity.
+PLoS Comput Biol 13(10): e1005775. https://doi.org/10.1371/journal.pcbi.1005775
 
 ## Installation and set up
 
@@ -21,7 +29,7 @@ Important settings to change include:
 
 | Settings                  | Description                                                     | 
 | ------------------------- | --------------------------------------------------------------- |
-| hostGenome                | Directory with human reference genome database, indexed for bwa |
+| hostGenome                | Directory with human reference genome database (bwa)            |
 | hostGenomeBase            | The name (base) of the database files                           |
 | cache                     | Directory for cache files                                       |
 | process.clusterOptions    | Cluster options if using slurm for execution                    |
@@ -30,10 +38,11 @@ In addition, default settings for primers, adapters and similar configurations a
 detail [here](data/README.md).
 
 ### Download host reference genome
-Set `nextflow.config` parameter `hostURL` to the URL of the host reference genome of your choice. 
-Then set up the host database with the following command:
+Set `nextflow.config` parameter `hostFasta` to the path of the host reference genome of your choice. 
+Then set up the host database with the following command. The database will be placed in the `hostGenome` directory
+and will be namned as `hostGenomeBase`.
 ```
-nextflow run main.nf --setup -profile slurm,singularity
+nextflow run main.nf --setup -profile slurm,singularity --outdir <outdir>
 ```
 
 ### Run Shiver initialisation
