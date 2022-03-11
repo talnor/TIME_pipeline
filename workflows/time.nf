@@ -2,7 +2,7 @@
 nextflow.enable.dsl=2
 
 // import modules
-include {getVersions} from '../modules/version.nf'
+include {getInfo} from '../modules/version.nf'
 include {trimming} from '../modules/preprocessing.nf'
 include {hostDepletion} from '../modules/preprocessing.nf'
 include {hostStats} from '../modules/preprocessing.nf'
@@ -21,7 +21,7 @@ workflow timeAnalysis {
       ch_hostGenome
 
     main:
-        getVersions()
+        getInfo()
         trimming(ch_fastq.combine(ch_adaptersFile).combine(ch_primersFile))
         hostDepletion(trimming.out.trim.combine(ch_hostGenome))
         hostStats(hostDepletion.out.bam)

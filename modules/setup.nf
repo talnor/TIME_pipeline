@@ -1,15 +1,18 @@
-process referenceDownload {
+process buildDatabase {
 
-    label 'referenceDownload'
+    label 'buildDatabase'
 
-    publishDir "${params.hostGenome}/", mode: 'copy'
+    publishDir "${params.outdir}/database/", mode: 'copy'
+    publishDir "${params.hostGenome}", mode: 'copy'
+
+    input:
+    path(fasta)
 
     output:
     path("${params.hostGenomeBase}*")
 
     script:
     """
-    wget ${params.hostURL}
-    bwa index -p ${params.hostGenomeBase} *
+    bwa index -p ${params.hostGenomeBase} ${fasta}
     """
 }

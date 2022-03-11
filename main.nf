@@ -9,10 +9,10 @@ def help() {
 		nextflow <nextflow options> run main.nf -profile <profiles> --input <fastqs> --outdir <dir> --ticket <batch> <options>
 
 		Initialize the Shiver input:
-		nextflow <nextflow options> run main.nf --init -profile <profiles> <options>
+		nextflow <nextflow options> run main.nf --init -profile <profiles> --outdir <dir> <options>
 
 		Create database for host genome:
-		nextflow <nextflow options> run main.nf --setup -profile <profiles> <options>
+		nextflow <nextflow options> run main.nf --setup -profile <profiles> --outdir <dir> <options>
 
 		Nextflow options:
 		-c                    Path to additional config file [Default: Nextflow uses nextflow.config in current and script
@@ -45,7 +45,7 @@ def help() {
         Setup options:
         --hostGenome        Directory to create reference database for host genome in
         --hostGenomeBase    Name of reference database for host genome
-        --hostURL           URL to download host reference genome from
+        --hostFasta         Host reference genome path
 		"""
 }
 
@@ -56,6 +56,11 @@ if (params.help) {
 
 // Verify input parameters
 
+if (!params.outdir){
+    println("Please specify directory for output with --outdir")
+    System.exit(1)
+}
+
 if ( params.setup ) {
     if (!params.hostGenome){
         println("Please specify reference database directory with --hostGenome")
@@ -65,8 +70,8 @@ if ( params.setup ) {
         println("Please specify reference database name with --hostGenomeBase")
         System.exit(1)
     }
-    if (!params.hostURL){
-        println("Please specify url for host reference with --hostURL")
+    if (!params.hostFasta){
+        println("Please specify url for host reference fasta with --hostFasta")
         System.exit(1)
     }
 }
@@ -85,10 +90,6 @@ else if ( params.init ) {
     }
     if (!params.config){
         println("Please specify Shiver config file with --config")
-        System.exit(1)
-    }
-    if (!params.outdir){
-        println("Please specify directory for results with --outdir")
         System.exit(1)
     }
 }
@@ -117,23 +118,25 @@ else {
         println("Please specify Shiver config file with --config")
         System.exit(1)
     }
-    if (!params.outdir){
-        println("Please specify directory for results with --outdir")
-        System.exit(1)
-    }
 }
 
-// include workflows
+// include workflows and modules
 include {timeAnalysis} from './workflows/time.nf'
 include {initialisation} from './workflows/initialisation.nf'
 include {setup} from './workflows/pipeline_setup.nf'
+include {getVersion} from './modules/version.nf'
 
 workflow {
+    getVersion()
 
     if ( params.setup ) {
+        // Set initialisation input
+        Channel.fromPath(params.hostFasta)
+            .set{ ch_hostFasta }
+
         // Run setup
         main:
-            setup()
+            setup(ch_hostFasta)
     }
 
     else if ( params.init ) {

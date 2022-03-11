@@ -1,7 +1,7 @@
 FROM python:2
 
 RUN apt-get update && \
-  apt-get install -yq make git bc wget && \
+  apt-get install -yq make git bc && \
   apt-get clean
 
 RUN pip install --upgrade pip

@@ -2,11 +2,13 @@
 nextflow.enable.dsl=2
 
 // import modules
-include {referenceDownload} from '../modules/setup.nf'
+include {buildDatabase} from '../modules/setup.nf'
 
 workflow setup {
+    take:
+      ch_hostFasta
 
     main:
-        referenceDownload()
+        buildDatabase(ch_hostFasta)
 
 }

@@ -1,8 +1,7 @@
-process getVersions {
+process getVersion {
 
     label 'version'
 
-    publishDir "${params.outdir}/", mode: 'copy'
     publishDir "${params.outdir}/store/", mode: 'copy'
 
     output:
@@ -10,7 +9,21 @@ process getVersions {
 
     script:
     """
-    echo Version: ${workflow.manifest.version} > pipeline.info.txt
+    echo Version: ${workflow.manifest.version} > pipeline.version.txt
+    """
+}
+
+process getInfo {
+
+    label 'info'
+
+    publishDir "${params.outdir}/store/", mode: 'copy'
+
+    output:
+    path("*.txt")
+
+    script:
+    """
     echo Primers: ${params.primers} >> pipeline.info.txt
     echo Adapters: ${params.adapters} >> pipeline.info.txt
     echo Shiver initialization directory: ${params.initDir} >> pipeline.info.txt
