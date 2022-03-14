@@ -5,38 +5,47 @@ nextflow.enable.dsl=2
 
 def help() {
 	log.info"""
-		nextflow <nextflow options> run main.nf <options>
+	    Run the analysis:
+		nextflow <nextflow options> run main.nf -profile <profiles> --input <fastqs> --outdir <dir> --ticket <batch> <options>
 
-		Required options:
-		-profile        Comma-separated list of run profiles to use: local,slurm,docker,singularity
-		--input         Input directory with fastq files
-		--outdir        Directory for results
-		--ticket        Batch name
+		Initialize the Shiver input:
+		nextflow <nextflow options> run main.nf --init -profile <profiles> --outdir <dir> <options>
 
-		Additional options:
-		--primers       Primers used during amplification [Default:?]
-		--adapters      Sequencing adapters [Default:?]
-		--initDir       Shiver initialization directory for configurations
-		--config        Shiver configuration file [Default:?]
-		--min_cov_eti   Coverage threshold in time of infection calculations [Default: 300]
-		--large         Use more computing resources
-		--help          Display this help message and exit
-
-		Initialisation of Shiver directory:
-		nextflow <nextflow options> run main.nf --init <options>
-
-        Required options:
-        -profile        Comma-separated list of run profiles to use: local,slurm,docker,singularity
-        --primers       Primers used during amplification [Default:?]
-		--adapters      Sequencing adapters [Default:?]
-		--config        Shiver configuration file [Default:?]
-		--references    HIV reference dataset
+		Create database for host genome:
+		nextflow <nextflow options> run main.nf --setup -profile <profiles> --outdir <dir> <options>
 
 		Nextflow options:
-		Specify config file with Nextflow options:
-		-c        Path to additional config file [Default: Nextflow uses nextflow.config in current and script
-		          directory in addition to configurations in ~/.nextflow/config]
-		-C        Path to config file. Other config files are ignored.
+		-c                    Path to additional config file [Default: Nextflow uses nextflow.config in current and script
+		                      directory in addition to configurations in ~/.nextflow/config]
+		-C                    Path to config file. Other config files are ignored.
+
+		Options:
+		-profile            Comma-separated list of run profiles to use: local,slurm,docker,singularity
+		--input             Input directory with fastq files
+		--outdir            Directory for results
+		--ticket            Batch name
+		--primers           Primers used during amplification [Default:?]
+		--adapters          Sequencing adapters [Default:?]
+		--initDir           Shiver initialization directory for configurations
+		--config            Shiver configuration file [Default:?]
+		--references        HIV reference dataset
+        --hostGenome        Directory with reference database for host genome
+        --hostGenomeBase    Name of reference database for host genome
+        --hostURL           URL to download host reference genome from
+		--min_cov_eti       Coverage threshold in time of infection calculations [Default: 300]
+		--large             Use more computing resources
+		--help              Display this help message and exit
+
+        Initialization options:
+        --primers           Primers used during amplification [Default:?]
+		--adapters          Sequencing adapters [Default:?]
+		--config            Shiver configuration file [Default:?]
+		--references        HIV reference dataset
+
+        Setup options:
+        --hostGenome        Directory to create reference database for host genome in
+        --hostGenomeBase    Name of reference database for host genome
+        --hostFasta         Host reference genome path
 		"""
 }
 
@@ -46,25 +55,41 @@ if (params.help) {
 }
 
 // Verify input parameters
-if (!params.primers){
-    println("Please specify primers with --primers")
-    System.exit(1)
-}
-if (!params.adapters){
-    println("Please specify adapters with --adapters")
-    System.exit(1)
-}
-if (!params.config){
-    println("Please specify Shiver config file with --config")
-    System.exit(1)
-}
+
 if (!params.outdir){
-    println("Please specify directory for results with --outdir")
+    println("Please specify directory for output with --outdir")
     System.exit(1)
 }
-if ( params.init ) {
+
+if ( params.setup ) {
+    if (!params.hostGenome){
+        println("Please specify reference database directory with --hostGenome")
+        System.exit(1)
+    }
+    if (!params.hostGenomeBase){
+        println("Please specify reference database name with --hostGenomeBase")
+        System.exit(1)
+    }
+    if (!params.hostFasta){
+        println("Please specify url for host reference fasta with --hostFasta")
+        System.exit(1)
+    }
+}
+else if ( params.init ) {
     if (!params.references){
         println("Please specify reference fasta file with --references")
+        System.exit(1)
+    }
+    if (!params.primers){
+        println("Please specify primers with --primers")
+        System.exit(1)
+    }
+    if (!params.adapters){
+        println("Please specify adapters with --adapters")
+        System.exit(1)
+    }
+    if (!params.config){
+        println("Please specify Shiver config file with --config")
         System.exit(1)
     }
 }
@@ -81,26 +106,50 @@ else {
         println("Please specify Shiver intialisation directory with --initDir")
         System.exit(1)
     }
+    if (!params.primers){
+        println("Please specify primers with --primers")
+        System.exit(1)
+    }
+    if (!params.adapters){
+        println("Please specify adapters with --adapters")
+        System.exit(1)
+    }
+    if (!params.config){
+        println("Please specify Shiver config file with --config")
+        System.exit(1)
+    }
 }
 
-// include workflows
+// include workflows and modules
 include {timeAnalysis} from './workflows/time.nf'
 include {initialisation} from './workflows/initialisation.nf'
+include {setup} from './workflows/pipeline_setup.nf'
+include {getVersion} from './modules/version.nf'
 
 workflow {
+    getVersion()
 
-    // Set general workflow input
-    Channel.fromPath(params.primers)
-        .set{ ch_primersFile }
-    Channel.fromPath(params.adapters)
-        .set{ ch_adaptersFile }
-    Channel.fromPath(params.config)
-        .set{ ch_shiverConfigFile }
+    if ( params.setup ) {
+        // Set initialisation input
+        Channel.fromPath(params.hostFasta)
+            .set{ ch_hostFasta }
 
-    if ( params.init ) {
+        // Run setup
+        main:
+            setup(ch_hostFasta)
+    }
+
+    else if ( params.init ) {
         // Set initialisation input
         Channel.fromPath(params.references)
             .set{ ch_referenceFile }
+        Channel.fromPath(params.primers)
+            .set{ ch_primersFile }
+        Channel.fromPath(params.adapters)
+            .set{ ch_adaptersFile }
+        Channel.fromPath(params.config)
+            .set{ ch_shiverConfigFile }
+
         // Run initialisation
         main:
             initialisation(ch_primersFile, ch_adaptersFile, ch_shiverConfigFile, ch_referenceFile)
@@ -115,6 +164,12 @@ workflow {
             .set{ ch_shiverInitDir }
         Channel.fromPath(params.hostGenome)
             .set{ ch_hostGenome }
+        Channel.fromPath(params.primers)
+            .set{ ch_primersFile }
+        Channel.fromPath(params.adapters)
+            .set{ ch_adaptersFile }
+        Channel.fromPath(params.config)
+            .set{ ch_shiverConfigFile }
 
         // run analysis
         main:

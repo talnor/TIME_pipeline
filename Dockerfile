@@ -19,7 +19,7 @@ COPY requirements.yml /requirements.yml
 RUN /usr/miniconda3/bin/conda env create -f /requirements.yml && \
 /usr/miniconda3/bin/conda clean -a
 
-RUN git clone https://github.com/ChrisHIV/shiver.git
+RUN git clone -b v1.5.8 https://github.com/ChrisHIV/shiver.git
 
 ENV PATH=/usr/miniconda3/envs/time_analysis/bin/:/shiver:/shiver/tools:$PATH
 

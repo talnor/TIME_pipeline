@@ -59,17 +59,11 @@ def get_region_data(base_frequency_file, pos_start, start_base, pos_fin, step):
             "HXB2_position": str,
             "Reference_position": str,
             "Reference_Base": str,
-            "A": float,
-            "C": float,
-            "G": float,
-            "T": float,
-            "gap": float,
-            "N": float,
         }
         all_data = pd.read_csv(f, header=0, names=headers)
-        all_data.astype(columns)
+        converted_data = all_data.astype(columns, copy=True, errors='raise')
     positions_of_interest = range(pos_start + start_base - 1, pos_fin + 1, step)
-    pol = all_data[all_data["HXB2_position"].isin(str(i) for i in positions_of_interest)]
+    pol = converted_data[converted_data["HXB2_position"].isin(str(i) for i in positions_of_interest)]
     return pol
 
 
