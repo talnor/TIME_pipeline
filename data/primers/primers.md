@@ -1,0 +1,101 @@
+# Primers
+
+**Naming scheme**
+
+**F1_fw1_524_547**:
+- Fragment number: F1
+- Primer direction: fw
+- Primer position: 1 (1=outer, 2=inner)
+- Start position of the primer according to HXB2 coordinates: 524
+- Stop position of the primer according to HXB2 coordinates: 547
+
+## Primer type A
+
+Primers_A_elife-11282-supp2-v2
+
+### Outer primers (PCR1)
+
+|Fragment|Primer name|Sequence|
+|--------|--------|--------|
+|1|F1_fw1_524_547 |CTC AAT AAA GCT TGC CTT GAG TGC|
+|1|F1_rev1_2347_2324|ACT GTA TCA TCT GCT CCT GTR TCT|
+|2|F2_fw1_1998_2015|AAA TTG CAG GGC YCC TAG|
+|2|F2_rev1_3892_3869|CTR TTA GCT GCC CCA TCT ACA TAG|
+|3a|F3_fw1_3630_3657|CAC ACT AAT GAT GTA ARA CAR TTA ACA G|
+|3a|F3a_rev1_5105_5077|GGG ATG TGT ACT TCT GAA CTT AYT YTT GG|
+|4|F4_fw1_4899_4922|CGG GTT TAT TWC AGR GAC AGC AGA|
+|4|F4_rev1_6595_6571|GGG GTT AAY TTT ACA CAT GGY TTT A|
+|5a|F5a_fw1_5960_5983|GGC ATY TCC TAT GGC AGG AAG AAG|
+|5a|F5a_rev1_8041_8016|GTG GTG CAR ATG AGT TTT CCA GAG CA|
+|6|F6_fw1_7785_7807|GGG TTC TTR GGA RCA GCA GGA AG|
+|6|F6_rev1_9614_9592|ATT GAG GCT TAA GCA GTG GGT TC|
+
+### Inner primers (PCR2)
+
+|Fragment|Primer name|Sequence|
+|--------|--------|--------|
+|1|F1_fw2_ 551_571|AAG TAG TGT GTG CCC GTC TGT|
+|1|F1_rev2_2272_2252|TGC CAA AGA GTG ATY TGA GGG|
+|2|F2_fw2_2022_2039|GGG CTG TTG GAR ATG TGG|
+|2|F2_rev2_3799_3777|ACA AAC TCC CAY TCA GGA ATC CA|
+|3a|F3_fw2_3681_3703|GAA AGC ATA GTR ATA TGG GGA AA|
+|3a|F3_rev2_5061_5040|CAC CTG CCA TCT GTT TTC CAT A|
+|4|F4_fw2_4956_4974|TGG AAA GGT GAA GGG GCA G|
+|4|F4_rev2_6450_6429|GTA CAC AGG CAT GTG TRG CCC A|
+|5a|F5a_fw2_6198_6222|TAA GAG AAA GAG CAG AAG ACA GTG G|
+|5a|F5a_rev2_8012_7989|CCA AAT YCC YAG GAG CTG TTG ATC|
+|6|F6_fw2_7801_7819|CAG GAA GCA CTA TGG GCG C|
+|6|F6_rev2_9582_9567|CCA GAG AGC TCC CAG G|
+
+## Primer type B
+
+### Outer primers (PCR1)
+
+|Fragment|Primer name|Sequence|
+|--------|--------|--------|
+|1|Reg1_fw1_524_547|CTC AAT AAA GCT TGC CTT GAG TGC|
+|1|Reg1_rev1_2347_2324|ACT GTA TCA TCT GCY CCT GTR TCT|
+|2|Reg2_fw1_1998_2015 |AAA TTG CAR GGC ICC TAG|
+|2|Reg2_rev1_3892_3869|CTR TTA GMT GCY CCA TCT ACA TAR|
+|3|Reg3_fw1_3630_3657|CAC ACT AAT GAT GTA ARR CAR TTA RCA G|
+|3|Reg3_rev1b_5213_5186|GGI ATG TGT ACT TCT GAR CTT AYY YTT GG|
+|4|Reg4_fw1_4899_4922|CGG GTT TAT TWC AGR GAC AGC AGA|
+|4|Reg4_rev1_6595_6571 |GGR GTY AIY TTT ACA CAT GGY TTT A|
+|5a|Reg5a_fw1_5960_5983|GGC ATY TCC IAT GGC AGG AAG AAG|
+|5a|Reg5a_rev1_8041_8016|GTG GTG CAR ATG SIY TTT CCA GAG CA|
+|6|Reg6_fw1_7785_7807 |GGG TTC TTR GGA RCA GCA GGA AG|
+|6|Reg6_rev1_9614_9592|ATT GAG GCT TAA GCA GTG GGT TC|
+
+### Inner primers (PCR2)
+
+|Fragment|Primer name|Sequence|
+|--------|--------|--------|
+|1|Reg1_fw2_ 551_571|AAG TAG TGT GTG CCC GTC TGT|
+|1|Reg1_rev2_2272_2252 |TGC CAA AGA GTG ATY TGA GGG|
+|2|Reg2_fw2_2022_2039|GGG YTG YTG GAR ATG YGG|
+|2|Reg2_rev2_3799_3777 |ACA AAY TCC CAY TCA GGR ATC CA|
+|3|Reg3_fw2_3681_3703|GAA IGC ATA GTR ATA TGG GGI AA|
+|3|Reg3_rev2_5061_5040 |CAC CTG CCA TCT GTT TTC CAT A|
+|4|Reg4_fw2_4956_4974 |TGG AAA GGT GAA GGG GCA G|
+|4|Reg4_rev2_6450_6429 |GTA CAC AIG CAT RTG TRG CCC A|
+|5a|Reg5a_fw2_6198_6222|TAA IIG ARA GAG CAG AAG AYA GTG G|
+|5a|Reg5a_rev2_8012_7989|CCA AAK YCC YAG GAR CTK TTG RTC|
+|6|Reg6_fw2_7801_7819 |CAG GAA GCA CIA TGG GCG C|
+|6|Reg6_rev2_9582_9567 |CCA GAG AGC TCC CRG G|
+
+## Primer type B2
+Same as for primer type B except for fragment 5.
+
+### Outer primers (PCR1)
+
+|Fragment|Primer name|Sequence|
+|--------|--------|--------|
+|5b|Reg5b_fw1_6194_6216 |AGA ITW AII GAR AGA GCA GAR GA|
+|5b|Reg5b_rev1_8032_8010 |ATG WIT TTT CCA GAG CAI CCC CA|
+
+### Inner primers (PCR2)
+
+|Fragment|Primer name|Sequence|
+|--------|--------|--------|
+|5b|Reg5b_fw2_6337_6359 |TIT AYT ATG GRG TRC CTG TRT GG|
+|5b|Reg5b_rev2_8012_7992|CCA AAK YCC YAG GAR CTK TTG|
