@@ -38,7 +38,6 @@ Below follows a description of the files that are made available in this directo
 | ----------- | ----------- | ----------- |
 | 1 | original_config.sh | Default settings used in Shiver |
 | 2 | shiver_config_BQ20_notrimming.sh | TIME-study settings |
-| 3 | config_BQ30.sh | Older settings |
 
 #### Configuration file 2
 
@@ -51,69 +50,15 @@ The following options in Shiver are altered. For the full list of options see th
 | mpileupOptions      | --min-BQ 20 | --min-BQ 5 | Higher quality threshold for individual bases |
 | deduplicate      | true | false | Remove read pairs marked as duplicates? This can cause loss of diversity in the reads due to true biological variation as well sequencing error. |
 
-#### Configuration file 3
-
-The following options in Shiver are altered. For the full list of options see the default config.
-
-| Parameter   | Value       | Default     | Description |
-| ----------- | ----------- | ----------- | ----------- |
-| mpileupOptions      | --min-BQ 30 | --min-BQ 5 | Higher quality threshold for individual bases |
-| deduplicate      | true | false | Remove read pairs marked as duplicates? This can cause loss of diversity in the reads due to true biological variation as well sequencing error. |
-
-
 ### Shiver init directory
 | Version     | InitDir     | Description | 
 | ----------- | ----------- | ----------- |
-| 1 | InitDirShiver220223_BQ30_1amp | 1 amplicon primers, 2020 references (no UTRs) |
-| 2 | InitDirShiver220128_BQ30_1amp | 1 amplicon primers, 2020 references |
-| 3 | InitDirShiver190405_BQ30 |  |
-| 4 | InitDirShiver191022_BQ30_PANHIV | 1 amplicon primers, 2018 references |
-| 5 | InitDirShiver220516_BQ20_1AMP_Bprimers_PCR1 | 1 amplicon primers, 2020 references (no UTRs) |
-| 6 | InitDirShiver220516_BQ20_1AMP_Bprimers_PCR2 | 1 amplicon primers, 2020 references (no UTRs) |
-| 7 | InitDirShiver220516_BQ20_6AMP_ABprimers_PCR1 | 6 amplicon primers, 2020 references (no UTRs) |
-| 8 | InitDirShiver220516_BQ20_6AMP_Aprimers_PCR1-2 | 6 amplicon primers, 2020 references (no UTRs) |
-| 9 | InitDirShiver220516_BQ20_6AMP_Aprimers_PCR1 | 6 amplicon primers, 2020 references (no UTRs) |
-
-#### Shiver init directory 1
-
-**Name**: InitDirShiver220223_BQ30_1amp 
-**Created**: 2022-02-23
-
-| Content     | Description     |
-| ----------- | ----------- |
-| Primer      | primers_1_amplicon_PCR1_190620.fasta | 
-| Adapter      | NexteraPE-PE.fa | 
-| Configurations      | shiver_config_BQ30_notrimming.sh |
-| References      | HIV1_COM_2020_547-9592_DNA.fasta |
-
-#### Shiver init directory 2
-
-**Name**: InitDirShiver220128_BQ30_1amp 
-**Created**: 2022-01-28
-
-| Content     | Description     |
-| ----------- | ----------- |
-| Primer      | primers_1_amplicon_PCR1_190620.fasta | 
-| Adapter      | NexteraPE-PE.fa | 
-| Configurations      | shiver_config_BQ30_notrimming.sh |
-| References      | HIV1_COM_2020_genome_DNA.fasta |
-
-#### Shiver init directory 3
-
-**Name**: InitDirShiver190405_BQ30
-**Created**: 2019-04-05
-
-#### Shiver init directory 4
-
-**Name**: InitDirShiver191022_BQ30_PANHIV 
-**Created**: 2019-10-22
-
-| Content     | Description     |
-| ----------- | ----------- |
-| Primer      | primers_1_amplicon_PCR1-2_190620.fasta | 
-| Adapter      | NexteraPE-PE.fa | 
-| Configurations      | config_BQ30.sh |
-| References      | HIV1_COM_2017_547-9592_DNA_2018Compendium.fasta |
+| 1 | InitDirShiver220516_BQ20_1AMP_Bprimers_PCR1 | 1 amplicon primers, 2020 references (no UTRs), primers: B, PCR1 |
+| 2 | InitDirShiver220516_BQ20_1AMP_Bprimers_PCR2 | 1 amplicon primers, 2020 references (no UTRs), primers: B, PCR1+PCR2 |
+| 3 | InitDirShiver220516_BQ20_6AMP_ABprimers_PCR1 | 6 amplicon primers, 2020 references (no UTRs), primers: A+B(F4), PCR1 |
+| 4 | InitDirShiver220516_BQ20_6AMP_Aprimers_PCR1-2 | 6 amplicon primers, 2020 references (no UTRs) primers: A, PCR1+2 |
+| 5 | InitDirShiver220516_BQ20_6AMP_Aprimers_PCR1 | 6 amplicon primers, 2020 references (no UTRs), primers: A, PCR1 |
+| 6 | InitDirShiver220525_BQ20_6AMP_Bprimers_PCR1 | 6 amplicon primers, 2020 references (no UTRs), primers: B, PCR1 |
 
 ### References to use in Shiver alignments
 Reference compendiums with representative genomes can be downloaded from the 
