@@ -171,7 +171,8 @@ with open(eti_summary, "w") as out:
     )
     for sample_info in samples:
         sample_info = sample_info.strip().lstrip("[").strip("]").strip(",")
-        sample = sample_info.split("_")[1]
+        #sample = sample_info.split("_")[1]
+        sample = sample_info
         base_frequency_file = glob.glob(
             os.path.join(
                 inputdir, "{}_remap_BaseFreqs_WithHXB2.csv".format(sample_info)
