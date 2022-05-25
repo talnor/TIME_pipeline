@@ -102,6 +102,8 @@ process assembly {
 
     label 'assembly'
 
+    errorStrategy { task.exitStatus == 1 ? 'ignore' : 'retry' }
+
     publishDir "${params.outdir}/${sample}/assembly/", mode: 'copy'
     publishDir "${params.outdir}/store/${sample}/", pattern: "*.fasta", mode: 'copy'
 

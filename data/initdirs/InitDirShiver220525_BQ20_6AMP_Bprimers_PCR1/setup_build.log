@@ -1,0 +1,9 @@
+
+
+Building a new DB, current time: 05/25/2022 14:31:39
+New DB name:   ./TIME_pipeline/work/e7/06a2cfbab5a7ce94b30d057e0dcd85/shiverInitDir/ExistingRefsBlastDatabase
+New DB title:  ./TIME_pipeline/work/e7/06a2cfbab5a7ce94b30d057e0dcd85/shiverInitDir/ExistingRefsUngapped.fasta
+Sequence type: Nucleotide
+Keep MBits: T
+Maximum file size: 1000000000B
+Adding sequences from FASTA; added 198 sequences in 0.0308712 seconds.

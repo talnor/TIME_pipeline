@@ -2,7 +2,7 @@ process shiver {
 
     label 'shiver'
 
-    errorStrategy { task.exitStatus == 3 ? 'ignore' : 'terminate' }
+    errorStrategy { task.exitStatus == 3 ? 'ignore' : 'retry' }
 
     publishDir "${params.outdir}/${sample}/shiver/", mode: 'copy'
     publishDir "${params.outdir}/store/${sample}/", pattern: "*.{csv,txt,fasta,fai}", mode: 'copy'

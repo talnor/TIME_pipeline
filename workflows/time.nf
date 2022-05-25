@@ -24,7 +24,7 @@ workflow timeAnalysis {
         getInfo()
         trimming(ch_fastq.combine(ch_adaptersFile).combine(ch_primersFile))
         hostDepletion(trimming.out.trim.combine(ch_hostGenome))
-        hostStats(hostDepletion.out.bam)
+        //hostStats(hostDepletion.out.bam)
         assembly(hostDepletion.out.filtered)
         shiver(assembly.out.contigs.combine(ch_shiverInitDir).combine(ch_shiverConfigFile)
             .join(hostDepletion.out.filtered))

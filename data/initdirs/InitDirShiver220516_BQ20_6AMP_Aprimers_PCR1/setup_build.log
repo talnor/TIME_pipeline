@@ -1,0 +1,91 @@
+
+
+Building a new DB, current time: 05/16/2022 14:34:16
+New DB name:   /Users/tanja.normark/Documents/Development/talnor/TIME_pipeline/work/57/bdb38417a272295cfaa941ea5fabaf/shiverInitDir/ExistingRefsBlastDatabase
+New DB title:  /Users/tanja.normark/Documents/Development/talnor/TIME_pipeline/work/57/bdb38417a272295cfaa941ea5fabaf/shiverInitDir/ExistingRefsUngapped.fasta
+Sequence type: Nucleotide
+Keep MBits: T
+Maximum file size: 1000000000B
+Adding sequences from FASTA; added 198 sequences in 0.155601 seconds.
+Unable to find image 'talnor/hiv_time_analysis:0.2.0' locally
+0.2.0: Pulling from talnor/hiv_time_analysis
+7e2b2a5af8f6: Pulling fs layer
+09b6f03ffac4: Pulling fs layer
+dc3f0c679f0f: Pulling fs layer
+fd4b47407fc3: Pulling fs layer
+b32f6bf7d96d: Pulling fs layer
+6f4489a7e4cf: Pulling fs layer
+af4b99ad9ef0: Pulling fs layer
+39db0bc48c26: Pulling fs layer
+acb4a89489fc: Pulling fs layer
+024f613fc1e5: Pulling fs layer
+54d4110106d3: Pulling fs layer
+79ccd55ef06f: Pulling fs layer
+cb6cd20782f3: Pulling fs layer
+3cb491b7d4ce: Pulling fs layer
+f7f4f02fe20f: Pulling fs layer
+fd97248b27f3: Pulling fs layer
+6fce81859f2f: Pulling fs layer
+fd4b47407fc3: Waiting
+b32f6bf7d96d: Waiting
+6f4489a7e4cf: Waiting
+acb4a89489fc: Waiting
+af4b99ad9ef0: Waiting
+39db0bc48c26: Waiting
+024f613fc1e5: Waiting
+54d4110106d3: Waiting
+79ccd55ef06f: Waiting
+cb6cd20782f3: Waiting
+3cb491b7d4ce: Waiting
+f7f4f02fe20f: Waiting
+6fce81859f2f: Waiting
+09b6f03ffac4: Verifying Checksum
+09b6f03ffac4: Download complete
+dc3f0c679f0f: Verifying Checksum
+dc3f0c679f0f: Download complete
+7e2b2a5af8f6: Verifying Checksum
+7e2b2a5af8f6: Download complete
+fd4b47407fc3: Verifying Checksum
+fd4b47407fc3: Download complete
+6f4489a7e4cf: Download complete
+39db0bc48c26: Verifying Checksum
+39db0bc48c26: Download complete
+af4b99ad9ef0: Verifying Checksum
+af4b99ad9ef0: Download complete
+acb4a89489fc: Verifying Checksum
+acb4a89489fc: Download complete
+024f613fc1e5: Verifying Checksum
+024f613fc1e5: Download complete
+54d4110106d3: Verifying Checksum
+54d4110106d3: Download complete
+b32f6bf7d96d: Verifying Checksum
+b32f6bf7d96d: Download complete
+79ccd55ef06f: Verifying Checksum
+79ccd55ef06f: Download complete
+3cb491b7d4ce: Download complete
+cb6cd20782f3: Verifying Checksum
+cb6cd20782f3: Download complete
+7e2b2a5af8f6: Pull complete
+fd97248b27f3: Download complete
+6fce81859f2f: Verifying Checksum
+6fce81859f2f: Download complete
+09b6f03ffac4: Pull complete
+dc3f0c679f0f: Pull complete
+fd4b47407fc3: Pull complete
+f7f4f02fe20f: Verifying Checksum
+f7f4f02fe20f: Download complete
+b32f6bf7d96d: Pull complete
+6f4489a7e4cf: Pull complete
+af4b99ad9ef0: Pull complete
+39db0bc48c26: Pull complete
+acb4a89489fc: Pull complete
+024f613fc1e5: Pull complete
+54d4110106d3: Pull complete
+79ccd55ef06f: Pull complete
+cb6cd20782f3: Pull complete
+3cb491b7d4ce: Pull complete
+f7f4f02fe20f: Pull complete
+fd97248b27f3: Pull complete
+6fce81859f2f: Pull complete
+Digest: sha256:2a98175f09f682d4824884717a94c03359aeae2cfce5fce77b94df6dd3c5729c
+Status: Image is up to date for talnor/hiv_time_analysis:0.2.0

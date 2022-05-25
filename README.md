@@ -11,17 +11,22 @@ PLoS Comput Biol 13(10): e1005775. https://doi.org/10.1371/journal.pcbi.1005775
 
 ## Installation and set up
 
-### Install nextflow
-`conda create -n time_analysis nextflow`
+### Install required software
 
-### Set up container image
-A container image is available from Docker at `talnor/hiv_time_analysis`.
-By default, this image will be used when using the docker or singularity profiles.
+Make sure the following is installed, or install them:
+- Singularity or Docker
+- Nextflow or conda (install nextflow using conda as described below)
 
-Alternatively, the container can be manually downloaded, or rebuilt from the Dockerfile in this 
-repo. If so update the settings in the `nextflow.config`.
-* manually pull singularity image: `singularity pull path/to/hiv_time_analysis.sif docker://talnor/hiv_time_analysis:<version>`
-* manually pull docker image: `docker pull talnor/hiv_time_analysis:<version>`
+```
+conda create -n time_analysis nextflow
+conda activate time_analysis
+```
+
+### Install TIME_pipeline
+
+```
+git clone https://github.com/talnor/TIME_pipeline.git
+```
 
 ### Configure pipeline options in the nextflow config file
 Default parameters and settings for running the pipeline are specified in `nextflow.config`. 
@@ -38,26 +43,34 @@ In addition, default settings for primers, adapters and similar configurations a
 detail [here](data/README.md).
 
 ### Download host reference genome
-Set `nextflow.config` parameter `hostFasta` to the path of the host reference genome of your choice. 
+
+For example, the following command can be run to download the human reference genome:
+```
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_genomic.fna.gz
+```
+ 
 Then set up the host database with the following command. The database will be placed in the `hostGenome` directory
 and will be namned as `hostGenomeBase`.
 ```
-nextflow run main.nf --setup -profile slurm,singularity --outdir <outdir>
+nextflow run main.nf --setup -profile slurm,singularity --hostFasta <path_to_genome> --outdir <outdir>
 ```
 
 ### Run Shiver initialisation
-Shiver initilisation directories are included in this repository. Information on these are 
-available [here](data/README.md). To create your own initilisation directory, run the following command:
+The Shiver initialization directory includes the set of primers used during the amplification of the samples as well as a 
+reference dataset to be used in the analysis. Several options are included in this repository. Information on these are 
+available [here](data/README.md). To create your own initialization directory, run the following command:
 ```
 nextflow run main.nf --init -profile slurm,singularity --primers <primers.fasta> --adapters <adapters.fasta> --config <shiver_config.sh> --references <references.fasta> --outdir <outdir>
 ```
 
 ## Usage
-`conda activate time_analysis`
+- Ensure the settings in the `nextflow.config` are correct for your samples. Importantly, the primer set and the 
+  initialization directory needs to match the primers used during amplification of the samples. Or override the
+  default values by supplying them as parameters in the command below.
 
 Basic usage:
-
 ```
+conda activate time_analysis
 nextflow run main.nf -profile slurm,singularity --input 'path/to/*_R{1,2}.fastq.gz' --outdir path/to/results/ --ticket <batch_name>
 ```
 
@@ -69,3 +82,12 @@ Check the command help for more info and options.
 ```
 nextflow run main.nf --help
 ```
+
+## Optional installation steps
+
+### Set up container image
+A container image is available from Docker at `talnor/hiv_time_analysis`.
+By default, this image will be used when using the docker or singularity profiles. If this doesn't work, the container can be manually downloaded, or rebuilt from the Dockerfile in this 
+repo. If so update the settings in the `nextflow.config`.
+* manually pull singularity image: `singularity pull path/to/hiv_time_analysis.sif docker://talnor/hiv_time_analysis:<version>`
+* manually pull docker image: `docker pull talnor/hiv_time_analysis:<version>`
