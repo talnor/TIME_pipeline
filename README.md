@@ -55,6 +55,8 @@ and will be namned as `hostGenomeBase`.
 nextflow run main.nf --setup -profile slurm,singularity --hostFasta <path_to_genome> --outdir <outdir>
 ```
 
+To run this pipeline in Bianca, the project-id must be defined in the `clusterOptions`.
+
 ### Run Shiver initialisation
 The Shiver initialization directory includes the set of primers used during the amplification of the samples as well as a 
 reference dataset to be used in the analysis. Several options are included in this repository. Information on these are 
