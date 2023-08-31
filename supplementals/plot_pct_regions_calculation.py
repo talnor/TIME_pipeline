@@ -13,17 +13,19 @@ file_75 = sys.argv[3]
 mode = sys.argv[4]
 anonymize = sys.argv[5]
 
+
 def get_failed_samples(etifile):
     """Returns a list of samples that lack ETI estimates"""
     df = pd.read_csv(etifile, sep=",", index_col="Sample")
-    failed = df[df['ETI'] == "-"]
+    failed = df[df["ETI"] == "-"]
     samples = failed.index.values.tolist()
     return samples
+
 
 def get_sample_names(etifile, anonym, outfilename):
     """Returns a list of sample names for use in legends. If legend names are anonymized also output a key file"""
     df = pd.read_csv(etifile, sep=",", index_col="Sample")
-    data = df[df['ETI'] != "-"]
+    data = df[df["ETI"] != "-"]
     samples = data.index.values.tolist()
     if anonym:
         ids = []
@@ -35,6 +37,7 @@ def get_sample_names(etifile, anonym, outfilename):
         samples = ids
     return samples
 
+
 def get_marker(num):
     """Returns a marker type for plotting"""
     marker = "."
@@ -45,6 +48,7 @@ def get_marker(num):
     elif num >= 21:
         marker = "^"
     return marker + "-"
+
 
 outfile = f"eti_comparison_{mode}_region_covered.png"
 if mode == "random":
@@ -64,12 +68,14 @@ else:
 files = [file_org, file_75, file_50]
 eti = pd.DataFrame()
 failed_samples = get_failed_samples(file_org)
-samples = get_sample_names(file_org, anonymize, f"eti_comparison_{mode}_region_covered_sampleIDs.txt")
+samples = get_sample_names(
+    file_org, anonymize, f"eti_comparison_{mode}_region_covered_sampleIDs.txt"
+)
 for i in range(len(files)):
-    df = pd.read_csv(files[i], sep=",", index_col = "Sample")
+    df = pd.read_csv(files[i], sep=",", index_col="Sample")
     df = df.drop(index=failed_samples)
     df = df.replace("-", -1)
-    formatted = df.astype({"ETI":float}, copy=True, errors="raise")
+    formatted = df.astype({"ETI": float}, copy=True, errors="raise")
     y = formatted["ETI"]
     eti[positions[i]] = y
 
@@ -83,6 +89,6 @@ ax.set_ylabel("ETI [years]")
 ax.set_xlabel("Percentage of region covered", labelpad=10, fontsize=10)
 ax.set_title(title, fontsize=13, pad=8)
 ax.set_xlabel("Part of region covered", labelpad=10, fontsize=10)
-ax.legend(bbox_to_anchor=(1.05, 1.0), fontsize="6", loc='upper left')
+ax.legend(bbox_to_anchor=(1.05, 1.0), fontsize="6", loc="upper left")
 plt.tight_layout()
 plt.savefig(outfile, dpi=500)

@@ -15,17 +15,19 @@ file_end_missing = sys.argv[4]
 pct = str(sys.argv[5])
 anonymize = sys.argv[6]
 
+
 def get_failed_samples(etifile):
     """Returns a list of samples that lack ETI estimates"""
     df = pd.read_csv(etifile, sep=",", index_col="Sample")
-    failed = df[df['ETI'] == "-"]
+    failed = df[df["ETI"] == "-"]
     samples = failed.index.values.tolist()
     return samples
+
 
 def get_sample_names(etifile, anonym, outfilename):
     """Returns a list of sample names for use in legends. If legend names are anonymized also output a key file"""
     df = pd.read_csv(etifile, sep=",", index_col="Sample")
-    data = df[df['ETI'] != "-"]
+    data = df[df["ETI"] != "-"]
     samples = data.index.values.tolist()
     if anonym:
         ids = []
@@ -36,6 +38,7 @@ def get_sample_names(etifile, anonym, outfilename):
                 out.write(f"{samples[i]},{id}\n")
         samples = ids
     return samples
+
 
 def get_marker(num):
     """Returns a marker type for plotting"""
@@ -48,6 +51,7 @@ def get_marker(num):
         marker = "^"
     return marker + "-"
 
+
 if pct == "50":
     positions = ["100%", f"random {pct}%", f"2087-3590 ({pct}%)", f"3593-5096 ({pct}%)"]
 elif pct == "75":
@@ -57,12 +61,14 @@ else:
 files = [file_org, file_random, file_end_missing, file_start_missing]
 eti = pd.DataFrame()
 failed_samples = get_failed_samples(file_org)
-samples = get_sample_names(file_org, anonymize, f"eti_comparison_{pct}pct_region_covered_sampleIDs.txt")
+samples = get_sample_names(
+    file_org, anonymize, f"eti_comparison_{pct}pct_region_covered_sampleIDs.txt"
+)
 for i in range(len(files)):
-    df = pd.read_csv(files[i], sep=",", index_col = "Sample")
+    df = pd.read_csv(files[i], sep=",", index_col="Sample")
     df_filtered = df.drop(index=failed_samples)
     df_filtered = df_filtered.replace("-", -1)
-    formatted = df_filtered.astype({"ETI":float}, copy=True, errors="raise")
+    formatted = df_filtered.astype({"ETI": float}, copy=True, errors="raise")
     y = formatted["ETI"]
     eti[positions[i]] = y
 
@@ -76,6 +82,6 @@ ax.set_ylabel("ETI [years]")
 ax.set_xlabel("Percentage of region covered", labelpad=10, fontsize=10)
 ax.set_title(f"ETI for subpopulations of {pct}% of sites", fontsize=13, pad=8)
 ax.set_xlabel("Part of region covered", labelpad=10, fontsize=10)
-ax.legend(bbox_to_anchor=(1.05, 1.0), fontsize="6", loc='upper left')
+ax.legend(bbox_to_anchor=(1.05, 1.0), fontsize="6", loc="upper left")
 plt.tight_layout()
 plt.savefig(f"eti_comparison_{pct}pct_region_covered.png", dpi=500)
