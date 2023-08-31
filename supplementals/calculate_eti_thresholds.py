@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 """Analyse the shiver BaseFreq files to calculate estimated time of infection using intrasample SNP variation.
+Performs the same calculations as the standard ETI script, but does so while specifying a subset of the region of
+interest to be used in calculations. What subset of positions should be included is defined by the following parameters:
+'mode': ["standard", "random", "missing-beginning", "missing-end"]
+'pct_sites_extracted': [0.5, 0.75, 1]
 
 Calculations are based on equation 2 in the following publication:
 Puller V, Neher R, Albert J (2017), Estimating time of HIV-1 infection from next-generation sequence diversity.
