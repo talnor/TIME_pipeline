@@ -205,9 +205,7 @@ def calculate_eti(pairwise_distance, parameters):
     return eti
 
 
-def run_analysis(
-    samples, eti_summary, outputdir, inputdir, ticket, parameters
-):
+def run_analysis(samples, eti_summary, outputdir, inputdir, ticket, parameters):
     """Perform all calculations for a batch of samples and output reports"""
     with open(eti_summary, "w") as out:
         header = get_report_header(parameters)
