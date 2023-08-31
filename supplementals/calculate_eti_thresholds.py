@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 """Analyse the shiver BaseFreq files to calculate estimated time of infection using intrasample SNP variation.
+Performs the same calculations as the standard ETI script, but does so while specifying a subset of the region of
+interest to be used in calculations. What subset of positions should be included is defined by the following parameters:
+'mode': ["standard", "random", "missing-beginning", "missing-end"]
+'pct_sites_extracted': [0.5, 0.75, 1]
 
 Calculations are based on equation 2 in the following publication:
 Puller V, Neher R, Albert J (2017), Estimating time of HIV-1 infection from next-generation sequence diversity.
@@ -13,6 +17,7 @@ import sys
 import glob
 import pandas as pd
 import numpy as np
+import random
 
 inputdir = sys.argv[1]
 coverage_threshold = sys.argv[2]
@@ -39,6 +44,10 @@ step = 3
 
 # Start base in codon
 start_base = 3
+
+# For threshold evaluations
+pct_sites_extracted = [0.5, 0.75, 1]
+extraction_modes = ["standard", "random", "missing-beginning", "missing-end"]
 
 
 def get_report_header(param):
@@ -94,14 +103,28 @@ def create_calculations_report(data, directory, sample, filtered=True):
     data.to_csv(sample_outfile, sep=",", index=False)
 
 
-def get_positions_of_interest(param):
+def get_positions_of_interest(param, pct_sites, mode):
     """Return positions in HXB2 coordinates to get data for"""
     positions_of_interest = range(
         param["pos_start"] + param["start_base"] - 1,
         param["pos_fin"] + 1,
         param["step"],
     )
-    return positions_of_interest
+    if mode == "standard":
+        positions = positions_of_interest
+    # Extract a subset of positions of interest
+    elif mode == "random":
+        number_of_positions = round(len(positions_of_interest) * pct_sites)
+        positions = random.sample(positions_of_interest, number_of_positions)
+    elif mode == "missing-beginning":
+        positions = positions_of_interest[
+            int(len(positions_of_interest) - len(positions_of_interest) * pct_sites) :
+        ]
+    elif mode == "missing-end":
+        positions = positions_of_interest[: int(len(positions_of_interest) * pct_sites)]
+    else:
+        sys.exit("Error in selection of genome positions")
+    return positions
 
 
 def get_region_data(base_frequency_file, positions):
@@ -205,7 +228,9 @@ def calculate_eti(pairwise_distance, parameters):
     return eti
 
 
-def run_analysis(samples, eti_summary, outputdir, inputdir, ticket, parameters):
+def run_analysis(
+    samples, eti_summary, outputdir, inputdir, ticket, parameters, pct_sites, mode
+):
     """Perform all calculations for a batch of samples and output reports"""
     with open(eti_summary, "w") as out:
         header = get_report_header(parameters)
@@ -224,7 +249,7 @@ def run_analysis(samples, eti_summary, outputdir, inputdir, ticket, parameters):
                 continue
             else:
                 # Calculate coverage
-                positions = get_positions_of_interest(parameters)
+                positions = get_positions_of_interest(parameters, pct_sites, mode)
                 pol = get_region_data(base_frequency_file[0], positions)
                 pol = calculate_nucleotide_frequencies(pol)
                 cov_average = calculate_average_coverage(pol)
@@ -276,15 +301,29 @@ def main():
         "eti_c": eti_c,
     }
 
-    outputdir = os.path.dirname(eti_summary)
-    run_analysis(
-        samples,
-        eti_summary,
-        outputdir,
-        inputdir,
-        ticket,
-        parameters,
-    )
+    for mode in extraction_modes:
+        for pct_sites in pct_sites_extracted:
+            report = "_".join(
+                [
+                    eti_summary[: eti_summary.rfind(".")],
+                    str(mode),
+                    "{}PCT.csv".format(int(pct_sites * 100)),
+                ]
+            )
+            outputdir = os.path.join(
+                os.path.dirname(eti_summary), "-".join([mode, str(pct_sites * 100)])
+            )
+            os.mkdir(outputdir)
+            run_analysis(
+                samples,
+                report,
+                outputdir,
+                inputdir,
+                ticket,
+                parameters,
+                pct_sites,
+                mode,
+            )
 
 
 main()
