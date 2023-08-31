@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-"""Analyse the shiver BaseFreq files to calculate estimated time of infection using intrapatient SNP variation.
+"""Analyse the shiver BaseFreq files to calculate estimated time of infection using intrasample SNP variation.
 
-Calculcations are based on equation 2 in the following publication:
+Calculations are based on equation 2 in the following publication:
 Puller V, Neher R, Albert J (2017), Estimating time of HIV-1 infection from next-generation sequence diversity.
 PLoS Comput Biol 13(10): e1005775. https://doi.org/10.1371/journal.pcbi.1005775
 As well as using ETI calculations from:
@@ -41,7 +41,70 @@ step = 3
 start_base = 3
 
 
-def get_region_data(base_frequency_file, pos_start, start_base, pos_fin, step):
+def get_report_header(param):
+    """Return ETI report header"""
+    header = ",".join(
+        [
+            "Project",
+            "Sample",
+            "Distance",
+            "ETI",
+            str(param["min_cov"]) + "X_Coverage",
+            "1000X_coverage",
+            "Average_coverage\n",
+        ]
+    )
+    return header
+
+
+def format_output_string(
+    ticket,
+    sample,
+    cov_threshold=0,
+    cov_1000=0,
+    cov_average=0,
+    pairwise_distance="-",
+    eti="-",
+):
+    """Return a formatted output string for the results of a sample"""
+    sampleline = ",".join(
+        [
+            ticket,
+            sample,
+            str(pairwise_distance),
+            str(eti),
+            str(round(cov_threshold, 2)) + "%",
+            str(round(cov_1000, 2)) + "%",
+            str(int(round(cov_average))) + "\n",
+        ]
+    )
+    return sampleline
+
+
+def create_calculations_report(data, directory, sample, filtered=True):
+    """Creates a csv file for the data and calculations performed for a sample"""
+    if filtered:
+        sample_outfile = os.path.join(
+            directory, sample + "_full_filtered_calculations.csv"
+        )
+    else:
+        sample_outfile = os.path.join(
+            directory, sample + "_failed_unfiltered_calculations.csv"
+        )
+    data.to_csv(sample_outfile, sep=",", index=False)
+
+
+def get_positions_of_interest(param):
+    """Return positions in HXB2 coordinates to get data for"""
+    positions_of_interest = range(
+        param["pos_start"] + param["start_base"] - 1,
+        param["pos_fin"] + 1,
+        param["step"],
+    )
+    return positions_of_interest
+
+
+def get_region_data(base_frequency_file, positions):
     """Return base count data for region of interest"""
     with open(base_frequency_file, "r") as f:
         headers = [
@@ -53,7 +116,7 @@ def get_region_data(base_frequency_file, pos_start, start_base, pos_fin, step):
             "G",
             "T",
             "gap",
-            "N"
+            "N",
         ]
         columns = {
             "HXB2_position": str,
@@ -61,41 +124,26 @@ def get_region_data(base_frequency_file, pos_start, start_base, pos_fin, step):
             "Reference_Base": str,
         }
         all_data = pd.read_csv(f, header=0, names=headers)
-        converted_data = all_data.astype(columns, copy=True, errors='raise')
-    positions_of_interest = range(pos_start + start_base - 1, pos_fin + 1, step)
-    pol = converted_data[converted_data["HXB2_position"].isin(str(i) for i in positions_of_interest)]
-    return pol
-
-
-def output_template_data(data, ticket, sample, cov_average, cov_threshold=0, cov_1000=0):
-    """Output template data for samples with insuffiecient or 0 coverage in entire region of interest"""
-    template_data = [
-        ticket,
-        sample,
-        "-",
-        "-",
-        str(round(cov_threshold, 2)) + "%",
-        str(round(cov_1000, 2)) + "%",
-        str(int(round(cov_average))) + "\n",
+    converted_data = all_data.astype(columns, copy=True, errors="raise")
+    pol = converted_data[
+        converted_data["HXB2_position"].isin(str(i) for i in positions)
     ]
-    out.write(",".join(template_data))
-    sample_outfile = sample + "_pairwise_distance_low_coverage.csv"
-    data.to_csv(sample_outfile, sep=",", index=False)
+    return pol
 
 
 def calculate_nucleotide_frequencies(pol):
     """Normalize nucleotide counts"""
-    nucleotide_counts_per_base = pol[["A", "C", "G", "T"]]
-    total_counts_per_base = nucleotide_counts_per_base.sum(axis=1)
-    pol["total_bases"] = total_counts_per_base.values
-    nucleotide_frequency_per_base = nucleotide_counts_per_base.div(
-        total_counts_per_base, axis="index"
+    nucleotide_counts_per_position = pol[["A", "C", "G", "T"]]
+    total_counts_per_position = nucleotide_counts_per_position.sum(axis=1)
+    pol["total_bases"] = total_counts_per_position.values
+    nucleotide_frequency_per_position = nucleotide_counts_per_position.div(
+        total_counts_per_position, axis="index"
     )
-    nucleotide_frequency_per_base = nucleotide_frequency_per_base.replace(
+    nucleotide_frequency_per_position = nucleotide_frequency_per_position.replace(
         [np.inf, -np.inf, "", np.nan], 0
     )
-    nucleotide_frequency_per_base.columns = ["freq_A", "freq_C", "freq_G", "freq_T"]
-    return pd.concat([pol, nucleotide_frequency_per_base], axis=1)
+    nucleotide_frequency_per_position.columns = ["freq_A", "freq_C", "freq_G", "freq_T"]
+    return pd.concat([pol, nucleotide_frequency_per_position], axis=1)
 
 
 def calculate_average_coverage(pol):
@@ -134,8 +182,10 @@ def calculate_theta(pol, diversity_threshold):
 
 def calculate_diversity(pol):
     """Calculate nucleotide diversity value for the sample"""
-    nucleotide_frequencies_per_base = pol[["freq_A", "freq_C", "freq_G", "freq_T"]]
-    diversity = nucleotide_frequencies_per_base * (1 - nucleotide_frequencies_per_base)
+    nucleotide_frequencies_per_position = pol[["freq_A", "freq_C", "freq_G", "freq_T"]]
+    diversity = nucleotide_frequencies_per_position * (
+        1 - nucleotide_frequencies_per_position
+    )
     pol["diversity"] = diversity.sum(axis=1)
     return pol
 
@@ -149,70 +199,94 @@ def calculate_positional_distance(pol, diversity_threshold):
     return pol
 
 
-def calculate_ETI(pairwise_distance, eti_m, eti_c):
+def calculate_eti(pairwise_distance, parameters):
     """Calculate estimated time of infection (ETI)"""
-    eti = eti_m * pairwise_distance + eti_c
+    eti = parameters["eti_m"] * pairwise_distance + parameters["eti_c"]
     return eti
 
 
-with open(eti_summary, "w") as out:
-    out.write(
-        ",".join(
-            [
-                "Project",
-                "Sample",
-                "Distance",
-                "ETI",
-                str(min_cov) + "X_Coverage",
-                "1000X_coverage",
-                "Average_coverage\n",
-            ]
-        )
-    )
-    for sample_info in samples:
-        sample_info = sample_info.strip().lstrip("[").strip("]").strip(",")
-        #sample = sample_info.split("_")[1]
-        sample = sample_info
-        base_frequency_file = glob.glob(
-            os.path.join(
-                inputdir, "{}_remap_BaseFreqs_WithHXB2.csv".format(sample_info)
+def run_analysis(
+    samples, eti_summary, outputdir, inputdir, ticket, parameters
+):
+    """Perform all calculations for a batch of samples and output reports"""
+    with open(eti_summary, "w") as out:
+        header = get_report_header(parameters)
+        out.write(header)
+        for sample_info_string in samples:
+            sample_info = sample_info_string.strip().lstrip("[").strip("]").strip(",")
+            sample = sample_info
+            base_frequency_file = glob.glob(
+                os.path.join(
+                    inputdir, "{}_remap_BaseFreqs_WithHXB2.csv".format(sample_info)
+                )
             )
-        )
-        if len(base_frequency_file) == 0:
-            template_data = [ticket, sample, "-", "-", "0%", "0%", "0\n"]
-            out.write(",".join(template_data))
-            continue
-        else:
-            pol = get_region_data(
-                base_frequency_file[0], pos_start, start_base, pos_fin, step
-            )
-            pol = calculate_nucleotide_frequencies(pol)
-            cov_average = calculate_average_coverage(pol)
-            cov_threshold = check_coverage_threshold(pol, min_cov)
-            cov_1000 = check_coverage_threshold(pol, 1000)
-            pol_unfiltered = pol.copy(deep=True)
-            pol = remove_low_coverage_positions(pol, min_cov)
-            if pol.empty:
-                output_template_data(pol_unfiltered, ticket, sample, cov_average, cov_threshold, cov_1000)
+            if len(base_frequency_file) == 0:
+                null_data = format_output_string(ticket, sample)
+                out.write(null_data)
                 continue
             else:
-                pol = calculate_positional_distance(pol, diversity_threshold)
-                pairwise_distance = pol["distance"].mean()
-                pol["avg_pairwise_distance"] = pairwise_distance
-                eti = calculate_ETI(pairwise_distance, eti_m, eti_c)
-                pol["ETI"] = eti
-                out.write(
-                    ",".join(
-                        [
-                            ticket,
-                            sample,
-                            str(pairwise_distance),
-                            str(eti),
-                            str(round(cov_threshold, 2)) + "%",
-                            str(round(cov_1000, 2)) + "%",
-                            str(int(round(cov_average))) + "\n",
-                        ]
+                # Calculate coverage
+                positions = get_positions_of_interest(parameters)
+                pol = get_region_data(base_frequency_file[0], positions)
+                pol = calculate_nucleotide_frequencies(pol)
+                cov_average = calculate_average_coverage(pol)
+                # Evaluate thresholds
+                cov_threshold = check_coverage_threshold(pol, parameters["min_cov"])
+                cov_1000 = check_coverage_threshold(pol, 1000)
+                pol_unfiltered = pol.copy(deep=True)
+                pol = remove_low_coverage_positions(pol, parameters["min_cov"])
+                if pol.empty:
+                    sample_results = format_output_string(
+                        ticket, sample, cov_threshold, cov_1000, cov_average
                     )
-                )
-                sample_outfile = sample + "_pairwise_distance.csv"
-                pol.to_csv(sample_outfile, sep=",", index=False)
+                    out.write(sample_results)
+                    create_calculations_report(pol_unfiltered, outputdir, sample, False)
+                    continue
+                else:
+                    # Perform ETI calculations
+                    pol = calculate_positional_distance(
+                        pol, parameters["diversity_threshold"]
+                    )
+                    pairwise_distance = pol["distance"].mean()
+                    pol["avg_pairwise_distance"] = pairwise_distance
+                    eti = calculate_eti(pairwise_distance, parameters)
+                    pol["ETI"] = eti
+                    # Create reports
+                    sample_results = format_output_string(
+                        ticket,
+                        sample,
+                        cov_threshold,
+                        cov_1000,
+                        cov_average,
+                        pairwise_distance,
+                        eti,
+                    )
+                    out.write(sample_results)
+                    create_calculations_report(pol, outputdir, sample)
+
+
+def main():
+    """Perform eti calculation for different settings for a batch of samples"""
+    parameters = {
+        "diversity_threshold": diversity_threshold,
+        "min_cov": min_cov,
+        "pos_start": pos_start,
+        "pos_fin": pos_fin,
+        "step": step,
+        "start_base": start_base,
+        "eti_m": eti_m,
+        "eti_c": eti_c,
+    }
+
+    outputdir = os.path.dirname(eti_summary)
+    run_analysis(
+        samples,
+        eti_summary,
+        outputdir,
+        inputdir,
+        ticket,
+        parameters,
+    )
+
+
+main()
